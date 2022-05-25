@@ -1,3 +1,5 @@
+import { UUID } from 'types/uuid.type';
+
 export interface IResource {
-  uuid: string;
+  uuid: UUID;
 }

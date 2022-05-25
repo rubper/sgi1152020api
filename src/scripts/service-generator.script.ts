@@ -61,7 +61,7 @@ export const serviceGenerator = () => {
       const scriptContent = _fileGenerator(modelName);
       let completedWithoutIssues = true;
       writeFile(
-        `src/shared/services/${modelName}.service.ts`, 
+        `src/core/services/${modelName}.service.ts`, 
         scriptContent, 
         (fileErr) => {
           if(fileErr) {

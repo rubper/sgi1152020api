@@ -1,5 +1,10 @@
 import { Global, Module } from '@nestjs/common';
 
 @Global()
-@Module({})
+@Module({
+  exports: [
+  ],
+  providers: [
+  ]
+})
 export class CoreModule {}

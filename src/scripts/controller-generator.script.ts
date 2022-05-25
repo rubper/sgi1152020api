@@ -13,7 +13,7 @@ const _fileGenerator = (model: string): string => {
   const lowerCaseModel = `${model[0].toLowerCase()}${model.substring(1)}`;
   console.log(`${model}Controller`);
   return `import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ${model}Service } from 'shared/services/${modelKebab}.service';
+import { ${model}Service } from 'core/services/${modelKebab}.service';
 import { I${model} } from 'interfaces/${modelKebab}.interface';
 import { CreateDTO } from 'shared/helpers/base/create-dto.type';
 import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
