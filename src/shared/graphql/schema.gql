@@ -1,0 +1,1144 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  """Identifier of current account in accounts chart"""
+  accountNumber: String!
+
+  """Amount un the current account"""
+  balance: Float!
+
+  """List of budgets where the current account was used"""
+  budgets: [Budget!]
+
+  """The timestamp for when it was registered the account"""
+  created_at: DateTime!
+
+  """The timestamp for when it was deleted the account"""
+  deleted_at: DateTime
+
+  """List of financial states where the current account was used"""
+  financialStates: [FinancialState!]
+
+  """Type of account"""
+  type: String!
+
+  """The timestamp for when it was updated the account"""
+  updated_at: DateTime!
+
+  """Owner of the current account"""
+  user: User!
+
+  """Unique identifier of the current account"""
+  uuid: UUID!
+}
+
+type Budget {
+  """The accounts involved in the current budget"""
+  accounts: [Account!]!
+
+  """The timestamp for when it was registered the budget"""
+  created_at: DateTime!
+
+  """Date of the current budget"""
+  date: DateTime
+
+  """The timestamp for when it was deleted the budget"""
+  deleted_at: DateTime
+
+  """The term of the current budget"""
+  term: Term!
+
+  """The timestamp for when it was updated the budget"""
+  updated_at: DateTime!
+
+  """User of the current budget"""
+  user: User!
+
+  """Unique identifier of the current budget"""
+  uuid: UUID!
+}
+
+type Configuration {
+  """Readable unique identifier of the current configuration"""
+  slugId: String!
+
+  """Readable identifier of the current configuration"""
+  title: String!
+
+  """Last time the configuration was changed"""
+  updated_at: DateTime!
+
+  """Users with this configuration"""
+  users: [User!]!
+
+  """Unique identifier of the current configuration"""
+  uuid: UUID!
+
+  """Value of the current configuration"""
+  value: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Debt {
+  """The amount to pay"""
+  amount: Float!
+
+  """The timestamp for when it was registered the debt"""
+  created_at: DateTime!
+
+  """The date where the debt began"""
+  date: DateTime
+
+  """When should it be paid"""
+  deadline: DateTime!
+
+  """The timestamp for when it was deleted the debt"""
+  deleted_at: DateTime
+
+  """The term where the debt was acquired"""
+  term: Term!
+
+  """The timestamp for when it was updated the debt"""
+  updated_at: DateTime!
+
+  """Unique identifier for the current debt"""
+  uuid: UUID!
+}
+
+type ExpectedTransaction {
+  """Account involved in the transaction"""
+  account: [Account!]!
+
+  """The amount of money involved in the operation"""
+  amount: Float!
+
+  """Budget where this expected transaction belongs"""
+  budget: [Budget!]!
+
+  """The timestamp for when it was registered the transaction"""
+  created_at: DateTime!
+
+  """The current amount of money"""
+  currentBalance: Float!
+
+  """The timestamp for when it was deleted the transaction"""
+  deleted_at: DateTime
+
+  """Description of the expected transaction"""
+  description: String!
+
+  """How much do we expect to have after the transaction"""
+  expectedAccountBudget: Float!
+
+  """Number of times that this transaction will be repeated"""
+  recurrence: Float!
+
+  """Indicates whether the expected transaction will be expense or income"""
+  type: String!
+
+  """The timestamp for when it was updated the transaction"""
+  updated_at: DateTime!
+
+  """Unique Identifier for the current transaction"""
+  uuid: UUID!
+}
+
+type FinancialState {
+  """Accounts under the current financial state"""
+  accounts: [Account!]!
+
+  """The timestamp for when it was registered the financial state"""
+  created_at: DateTime!
+
+  """Custom Title for the current financial state"""
+  customTitle: String!
+
+  """The date of the current financial state"""
+  date: DateTime!
+
+  """The timestamp for when it was deleted the financial state"""
+  deleted_at: DateTime
+
+  """The term of the current financial state"""
+  term: Term!
+
+  """The timestamp for when it was updated the financial state"""
+  updated_at: DateTime!
+
+  """User associated to this financial state"""
+  user: User!
+
+  """Unique Identifier for the current financial state"""
+  uuid: UUID!
+}
+
+input GqlAccountCreateInput {
+  """Identifier of current account in accounts chart"""
+  accountNumber: String!
+
+  """Amount un the current account"""
+  balance: Float!
+
+  """Type of account"""
+  type: String!
+
+  """Owner of the current account"""
+  user: GqlUserCreateInput!
+}
+
+input GqlAccountUpdateInput {
+  """Identifier of current account in accounts chart"""
+  accountNumber: String
+
+  """Amount un the current account"""
+  balance: Float
+
+  """The timestamp for when it was deleted the account"""
+  deleted_at: DateTime
+
+  """Type of account"""
+  type: String
+
+  """Owner of the current account"""
+  user: GqlUserCreateInput
+
+  """Unique identifier of the current account"""
+  uuid: UUID
+}
+
+input GqlBudgetCreateInput {
+  """The accounts involved in the current budget"""
+  account: [GqlAccountCreateInput!]!
+
+  """Date of the current budget"""
+  date: DateTime
+
+  """The term of the current budget"""
+  term: GqlTermCreateInput!
+
+  """User of the current budget"""
+  user: GqlUserCreateInput!
+}
+
+input GqlBudgetUpdateInput {
+  """The accounts involved in the current budget"""
+  account: [GqlAccountCreateInput!]
+
+  """Date of the current budget"""
+  date: DateTime
+
+  """The timestamp for when it was deleted the budget"""
+  deleted_at: DateTime
+
+  """The term of the current budget"""
+  term: GqlTermCreateInput
+
+  """User of the current budget"""
+  user: GqlUserCreateInput
+
+  """Unique identifier of the current budget"""
+  uuid: UUID!
+}
+
+input GqlConfigurationCreateInput {
+  """Readable unique identifier of the current configuration"""
+  slugId: String!
+
+  """Readable identifier of the current configuration"""
+  title: String!
+
+  """Initial users with this config"""
+  users: [GqlUserCreateInput!]!
+
+  """Value of the current configuration"""
+  value: String!
+}
+
+input GqlConfigurationUpdateInput {
+  """Readable unique identifier of the current configuration"""
+  slugId: String
+
+  """Readable identifier of the current configuration"""
+  title: String
+
+  """Initial users with this config"""
+  users: [GqlUserCreateInput!]
+
+  """Unique identifier of the current configuration"""
+  uuid: UUID!
+
+  """Value of the current configuration"""
+  value: String
+}
+
+input GqlDebtCreateInput {
+  """The amount to pay"""
+  amount: Float!
+
+  """The date where the debt began"""
+  date: DateTime
+
+  """When should it be paid"""
+  deadline: DateTime!
+
+  """The term where the debt was acquired"""
+  term: GqlTermCreateInput!
+}
+
+input GqlDebtUpdateInput {
+  """The amount to pay"""
+  amount: Float
+
+  """The date where the debt began"""
+  date: DateTime
+
+  """When should it be paid"""
+  deadline: DateTime
+
+  """The timestamp for when it was deleted the debt"""
+  deleted_at: DateTime
+
+  """The term where the debt was acquired"""
+  term: GqlTermCreateInput
+
+  """Unique identifier for the current debt"""
+  uuid: UUID!
+}
+
+input GqlExpectedTransactionCreateInput {
+  """Account involved in the transaction"""
+  account: [GqlAccountCreateInput!]!
+
+  """The amount of money involved in the operation"""
+  amount: Float!
+
+  """Budget where this expected transaction belongs"""
+  budget: [GqlBudgetCreateInput!]!
+
+  """The current amount of money"""
+  currentBalance: Float
+
+  """Description of the expected transaction"""
+  description: String
+
+  """How much do we expect to have after the transaction"""
+  expectedAccountBudget: Float
+
+  """Number of times that this transaction will be repeated"""
+  recurrence: Float!
+
+  """Indicates whether the expected transaction will be expense or income"""
+  type: String!
+}
+
+input GqlExpectedTransactionUpdateInput {
+  """Account involved in the transaction"""
+  account: [GqlAccountCreateInput!]
+
+  """The amount of money involved in the operation"""
+  amount: Float
+
+  """Budget where this expected transaction belongs"""
+  budget: [GqlBudgetCreateInput!]
+
+  """The current amount of money"""
+  currentBalance: Float
+
+  """The timestamp for when it was deleted the transaction"""
+  deleted_at: DateTime
+
+  """Description of the expected transaction"""
+  description: String
+
+  """How much do we expect to have after the transaction"""
+  expectedAccountBudget: Float
+
+  """Number of times that this transaction will be repeated"""
+  recurrence: Float
+
+  """Indicates whether the expected transaction will be expense or income"""
+  type: String
+
+  """Unique Identifier for the expected transaction"""
+  uuid: UUID!
+}
+
+input GqlFinancialStateCreateInput {
+  """Accounts under the current financial state"""
+  accounts: [GqlAccountCreateInput!]!
+
+  """Custom Title for the current financial state"""
+  customTitle: String
+
+  """The date of the current financial state"""
+  date: DateTime
+
+  """The term of the current financial state"""
+  term: GqlTermCreateInput!
+
+  """User associated to this financial state"""
+  user: GqlUserCreateInput!
+}
+
+input GqlFinancialStateUpdateInput {
+  """Accounts under the current financial state"""
+  accounts: [GqlAccountCreateInput!]
+
+  """Custom Title for the current financial state"""
+  customTitle: String
+
+  """The date of the current financial state"""
+  date: DateTime
+
+  """The timestamp for when it was deleted the financial state"""
+  deleted_at: DateTime
+
+  """The term of the current financial state"""
+  term: GqlTermCreateInput
+
+  """User associated to this financial state"""
+  user: GqlUserCreateInput
+
+  """Unique Identifier for the current financial state"""
+  uuid: UUID!
+}
+
+input GqlKeyHashCreateInput {
+  """Owner of the keyhash"""
+  user: GqlUserCreateInput!
+
+  """Value of the keyhash"""
+  value: String!
+}
+
+input GqlKeyHashUpdateInput {
+  """Owner of the keyhash"""
+  user: GqlUserCreateInput
+
+  """Unique Identifier for the current transaction detail"""
+  uuid: UUID!
+
+  """Unique identifier for the current keyhash"""
+  value: String!
+}
+
+input GqlRoleCreateInput {
+  """Readable Name for the current Role"""
+  displayTitle: String!
+
+  """Unique Readable Identifier for the current Role"""
+  slugId: String!
+
+  """Users with the current role"""
+  users: [GqlUserCreateInput!]!
+}
+
+input GqlRoleUpdateInput {
+  """Readable Name for the current Role"""
+  displayTitle: String
+
+  """Unique Readable Identifier for the current Role"""
+  slugId: String
+
+  """Users with the current role"""
+  users: [GqlUserCreateInput!]
+
+  """Unique Identifier for the current Role"""
+  uuid: UUID!
+}
+
+input GqlTermCreateInput {
+  """Array of budgets of the current term"""
+  budgets: [GqlBudgetCreateInput!]
+
+  """Debts in the current term"""
+  debts: [GqlDebtCreateInput!]
+
+  """Ending timestamp for the current term"""
+  end: DateTime!
+
+  """Financial states in this term"""
+  financialStates: [GqlFinancialStateCreateInput!]
+
+  """Starting timestamp for the current term"""
+  start: DateTime!
+
+  """Transactions registries in the current term"""
+  transactionHistories: [GqlTransactionHistoryCreateInput!]
+
+  """Transactions in the current term"""
+  transactions: [GqlTransactionCreateInput!]
+}
+
+input GqlTermUpdateInput {
+  """Array of budgets of the current term"""
+  budgets: [GqlBudgetCreateInput!]
+
+  """Debts in the current term"""
+  debts: [GqlDebtCreateInput!]
+
+  """The timestamp for when it was deleted the term"""
+  deleted_at: DateTime
+
+  """Ending timestamp for the current term"""
+  end: DateTime
+
+  """Financial states in this term"""
+  financialStates: [GqlFinancialStateCreateInput!]
+
+  """Starting timestamp for the current term"""
+  start: DateTime
+
+  """Transactions registries in the current term"""
+  transactionHistories: [GqlTransactionHistoryCreateInput!]
+
+  """Transactions in the current term"""
+  transactions: [GqlTransactionCreateInput!]
+
+  """Unique Identifier for the current theme preference"""
+  uuid: UUID!
+}
+
+input GqlThemePreferenceCreateInput {
+  """Unique Readable Identifier for the current theme preference"""
+  slugId: String!
+
+  """What will affect this preference"""
+  themeAspect: String!
+
+  """Readable identifier of the current configuration"""
+  title: String!
+
+  """Users with this configuration"""
+  users: [GqlUserCreateInput!]
+
+  """Value of the theme preference"""
+  value: String!
+}
+
+input GqlThemePreferenceUpdateInput {
+  """Unique Readable Identifier for the current theme preference"""
+  slugId: String
+
+  """What will affect this preference"""
+  themeAspect: String
+
+  """Readable identifier of the current configuration"""
+  title: String
+
+  """Users with this configuration"""
+  users: [GqlUserCreateInput!]
+
+  """Unique Identifier for the current theme preference"""
+  uuid: UUID!
+
+  """Value of the theme preference"""
+  value: String
+}
+
+input GqlTransactionCreateInput {
+  """The amount of money involved in the operation"""
+  amount: Float!
+
+  """The date of the transaction"""
+  date: DateTime!
+
+  """Term of the transaction"""
+  term: GqlTermCreateInput!
+
+  """Details of the transaction"""
+  transactionDetails: [GqlTransactionDetailCreateInput!]
+
+  """Transaction History of the transaction"""
+  transactionHistory: GqlTransactionHistoryCreateInput
+
+  """Operation type"""
+  type: String!
+
+  """User of the transaction"""
+  user: GqlUserCreateInput!
+}
+
+input GqlTransactionDetailCreateInput {
+  """Amount of the transaction"""
+  amount: Float!
+
+  """The date of the transaction detail"""
+  date: DateTime!
+
+  """Optional description of the current detail"""
+  description: String
+
+  """Actual amount of expense if applies"""
+  realExpense: Float!
+
+  """Actual amount of income if applies"""
+  realIncome: Float!
+
+  """Transaction parent of the current detail"""
+  transaction: GqlTransactionCreateInput!
+}
+
+input GqlTransactionDetailUpdateInput {
+  """Amount of the transaction"""
+  amount: Float
+
+  """The date of the transaction detail"""
+  date: DateTime
+
+  """The timestamp for when it was deleted the transaction detail"""
+  deleted_at: DateTime
+
+  """Optional description of the current detail"""
+  description: String
+
+  """Actual amount of expense if applies"""
+  realExpense: Float
+
+  """Actual amount of income if applies"""
+  realIncome: Float
+
+  """Transaction parent of the current detail"""
+  transaction: GqlTransactionCreateInput
+
+  """Unique Identifier for the current transaction detail"""
+  uuid: UUID!
+}
+
+input GqlTransactionHistoryCreateInput {
+  """The owner of the transaction history"""
+  term: GqlTermCreateInput!
+
+  """List of transactions for the current History"""
+  transactions: [GqlTransactionCreateInput!]
+
+  """The owner of the transaction history"""
+  user: GqlUserCreateInput!
+}
+
+input GqlTransactionHistoryUpdateInput {
+  """The amount of money involved in the operation"""
+  amount: Float
+
+  """The date of the transaction"""
+  date: DateTime
+
+  """The timestamp for when it was deleted the history"""
+  deleted_at: DateTime
+
+  """Term of the transaction"""
+  term: GqlTermCreateInput
+
+  """Details of the transaction"""
+  transactionDetails: [GqlTransactionDetailCreateInput!]
+
+  """Transaction History of the transaction"""
+  transactionHistory: GqlTransactionHistoryCreateInput
+
+  """Operation type"""
+  type: String
+
+  """User of the transaction"""
+  user: GqlUserCreateInput
+
+  """Unique Identifier for the current transaction history"""
+  uuid: UUID!
+}
+
+input GqlTransactionUpdateInput {
+  """The amount of money involved in the operation"""
+  amount: Float
+
+  """The date of the transaction"""
+  date: DateTime
+
+  """The timestamp for when it was deleted the transaction"""
+  deleted_at: DateTime
+
+  """Term of the transaction"""
+  term: GqlTermCreateInput
+
+  """Details of the transaction"""
+  transactionDetails: [GqlTransactionDetailCreateInput!]
+
+  """Transaction History of the transaction"""
+  transactionHistory: GqlTransactionHistoryCreateInput
+
+  """Operation type"""
+  type: String
+
+  """User of the transaction"""
+  user: GqlUserCreateInput
+
+  """Unique Identifier for the current transaction"""
+  uuid: UUID!
+}
+
+input GqlUserCreateInput {
+  """Current user's accounts"""
+  accounts: [GqlAccountCreateInput!]
+
+  """Budgets of the current user"""
+  budgets: [GqlBudgetCreateInput!]
+
+  """User's email"""
+  email: String!
+
+  """Financial states for the current user"""
+  financialStates: [GqlFinancialStateCreateInput!]
+
+  """User's keys for other security features"""
+  keyHashes: [GqlKeyHashCreateInput!]
+
+  """User's password hash for authentication"""
+  passwordHash: String!
+
+  """User's password salt for authentication"""
+  passwordSalt: String!
+
+  """User's preferences for the system"""
+  preferences: [GqlConfigurationCreateInput!]
+
+  """User's roles"""
+  roles: [GqlRoleCreateInput!]!
+
+  """User's visual preferences"""
+  themePreferences: [GqlThemePreferenceCreateInput!]
+
+  """Transaction histories for the current user"""
+  transactionHistories: [GqlTransactionHistoryCreateInput!]
+
+  """Transaction histories for the current user"""
+  transactions: [GqlTransactionCreateInput!]
+
+  """User's key for 2fa"""
+  twofactorKey: String
+
+  """User Profile of the current User"""
+  userProfile: GqlUserProfileCreateInput!
+
+  """User's Username"""
+  username: String!
+}
+
+input GqlUserProfileCreateInput {
+  """Url where the avatar is stored"""
+  avatarUrl: String
+
+  """Url where the background image is stored"""
+  backgroundUrl: String
+
+  """Family name of the user"""
+  familyName: String!
+
+  """Given name of the user"""
+  givenName: String!
+}
+
+input GqlUserProfileUpdateInput {
+  """Url where the avatar is stored"""
+  avatarUrl: String
+
+  """Url where the background image is stored"""
+  backgroundUrl: String
+
+  """Family name of the user"""
+  familyName: String
+
+  """Given name of the user"""
+  givenName: String
+
+  """Unique Identifier for the current user profile"""
+  uuid: UUID!
+}
+
+input GqlUserUpdateInput {
+  """Current user's accounts"""
+  accounts: [GqlAccountCreateInput!]
+
+  """Budgets of the current user"""
+  budgets: [GqlBudgetCreateInput!]
+
+  """The timestamp for when it was deleted the user"""
+  deleted_at: DateTime
+
+  """User's email"""
+  email: String
+
+  """Financial states for the current user"""
+  financialStates: [GqlFinancialStateCreateInput!]
+
+  """User's keys for other security features"""
+  keyHashes: [GqlKeyHashCreateInput!]
+
+  """User's password hash for authentication"""
+  passwordHash: String
+
+  """User's password salt for authentication"""
+  passwordSalt: String
+
+  """User's preferences for the system"""
+  preferences: [GqlConfigurationCreateInput!]
+
+  """User's roles"""
+  roles: [GqlRoleCreateInput!]
+
+  """User's visual preferences"""
+  themePreferences: [GqlThemePreferenceCreateInput!]
+
+  """Transaction histories for the current user"""
+  transactionHistories: [GqlTransactionHistoryCreateInput!]
+
+  """Transaction histories for the current user"""
+  transactions: [GqlTransactionCreateInput!]
+
+  """User's key for 2fa"""
+  twofactorKey: String
+
+  """User Profile of the current User"""
+  userProfile: GqlUserProfileCreateInput
+
+  """User's Username"""
+  username: String
+
+  """Unique Identifier for the current user"""
+  uuid: UUID!
+}
+
+type KeyHash {
+  """Owner of the keyhash"""
+  user: User!
+
+  """Unique Identifier for the current keyhash"""
+  uuid: UUID!
+
+  """Value of the keyhash"""
+  value: String!
+}
+
+type Mutation {
+  createAccount(createAccountInput: GqlAccountCreateInput!): Account!
+  createBudget(createBudgetInput: GqlBudgetCreateInput!): Budget!
+  createConfiguration(createConfigurationInput: GqlConfigurationCreateInput!): Configuration!
+  createDebt(createDebtInput: GqlDebtCreateInput!): Debt!
+  createExpectedTransaction(createExpectedTransactionInput: GqlExpectedTransactionCreateInput!): ExpectedTransaction!
+  createFinancialState(createFinancialStateInput: GqlFinancialStateCreateInput!): FinancialState!
+  createKeyHash(createKeyHashInput: GqlKeyHashCreateInput!): KeyHash!
+  createRole(createRoleInput: GqlRoleCreateInput!): Role!
+  createTerm(createTermInput: GqlTermCreateInput!): Term!
+  createThemePreference(createThemePreferenceInput: GqlThemePreferenceCreateInput!): ThemePreference!
+  createTransaction(createTransactionInput: GqlTransactionCreateInput!): Transaction!
+  createTransactionDetail(createTransactionDetailInput: GqlTransactionDetailCreateInput!): TransactionDetail!
+  createTransactionHistory(createTransactionHistoryInput: GqlTransactionHistoryCreateInput!): TransactionHistory!
+  createUser(createUserInput: GqlUserCreateInput!): User!
+  createUserProfile(createUserProfileInput: GqlUserProfileCreateInput!): UserProfile!
+  removeAccount(uuid: UUID!): Account!
+  removeBudget(uuid: UUID!): Budget!
+  removeConfiguration(uuid: UUID!): Configuration!
+  removeDebt(uuid: UUID!): Debt!
+  removeExpectedTransaction(uuid: UUID!): ExpectedTransaction!
+  removeFinancialState(uuid: UUID!): FinancialState!
+  removeKeyHash(uuid: UUID!): KeyHash!
+  removeRole(uuid: UUID!): Role!
+  removeTerm(uuid: UUID!): Term!
+  removeThemePreference(uuid: UUID!): ThemePreference!
+  removeTransaction(uuid: UUID!): Transaction!
+  removeTransactionDetail(uuid: UUID!): TransactionDetail!
+  removeTransactionHistory(uuid: UUID!): TransactionHistory!
+  removeUser(uuid: UUID!): User!
+  removeUserProfile(uuid: UUID!): UserProfile!
+  updateAccount(updateAccountInput: GqlAccountUpdateInput!): Account!
+  updateBudget(updateBudgetInput: GqlBudgetUpdateInput!): Budget!
+  updateConfiguration(updateConfigurationInput: GqlConfigurationUpdateInput!): Configuration!
+  updateDebt(updateDebtInput: GqlDebtUpdateInput!): Debt!
+  updateExpectedTransaction(updateExpectedTransactionInput: GqlExpectedTransactionUpdateInput!): ExpectedTransaction!
+  updateFinancialState(updateFinancialStateInput: GqlFinancialStateUpdateInput!): FinancialState!
+  updateKeyHash(updateKeyHashInput: GqlKeyHashUpdateInput!): KeyHash!
+  updateRole(updateRoleInput: GqlRoleUpdateInput!): Role!
+  updateTerm(updateTermInput: GqlTermUpdateInput!): Term!
+  updateThemePreference(updateThemePreferenceInput: GqlThemePreferenceUpdateInput!): ThemePreference!
+  updateTransaction(updateTransactionInput: GqlTransactionUpdateInput!): Transaction!
+  updateTransactionDetail(updateTransactionDetailInput: GqlTransactionDetailUpdateInput!): TransactionDetail!
+  updateTransactionHistory(updateTransactionHistoryInput: GqlTransactionHistoryUpdateInput!): TransactionHistory!
+  updateUser(updateUserInput: GqlUserUpdateInput!): User!
+  updateUserProfile(updateUserProfileInput: GqlUserProfileUpdateInput!): UserProfile!
+}
+
+type Query {
+  account(uuid: UUID): Account!
+  accounts: [Account!]!
+  budget(uuid: UUID): Budget!
+  budgets: [Budget!]!
+  configuration(uuid: UUID): Configuration!
+  configurations: [Configuration!]!
+  debt(uuid: UUID): Debt!
+  debts: [Debt!]!
+  expectedTransaction(uuid: UUID): ExpectedTransaction!
+  expectedTransactions: [ExpectedTransaction!]!
+  financialState(uuid: UUID): FinancialState!
+  financialStates: [FinancialState!]!
+  keyHash(uuid: UUID): KeyHash!
+  keyHashs: [KeyHash!]!
+  role(uuid: UUID): Role!
+  roles: [Role!]!
+  term(uuid: UUID): Term!
+  terms: [Term!]!
+  themePreference(uuid: UUID): ThemePreference!
+  themePreferences: [ThemePreference!]!
+  transaction(uuid: UUID): Transaction!
+  transactionDetail(uuid: UUID): TransactionDetail!
+  transactionDetails: [TransactionDetail!]!
+  transactionHistory(uuid: UUID): TransactionHistory!
+  transactionHistorys: [TransactionHistory!]!
+  transactions: [Transaction!]!
+  user(uuid: UUID): User!
+  userProfile(uuid: UUID): UserProfile!
+  userProfiles: [UserProfile!]!
+  users: [User!]!
+}
+
+type Role {
+  """Readable Name for the current Role"""
+  displayTitle: String!
+
+  """Unique Readable Identifier for the current Role"""
+  slugId: String!
+
+  """Users with the current role"""
+  users: [User!]!
+
+  """Unique Identifier for the current Role"""
+  uuid: UUID!
+}
+
+type Term {
+  """Array of budgets of the current term"""
+  budgets: [Budget!]
+
+  """The timestamp for when it was registered the term"""
+  created_at: DateTime!
+
+  """Debts in the current term"""
+  debts: [Debt!]
+
+  """The timestamp for when it was deleted the term"""
+  deleted_at: DateTime
+
+  """Ending timestamp for the current term"""
+  end: DateTime!
+
+  """Financial states in this term"""
+  financialStates: [FinancialState!]
+
+  """Starting timestamp for the current term"""
+  start: DateTime!
+
+  """Transactions registries in the current term"""
+  transactionHistories: [TransactionHistory!]
+
+  """Transactions in the current term"""
+  transactions: [Transaction!]
+
+  """The timestamp for when it was updated the term"""
+  updated_at: DateTime!
+
+  """Unique Identifier for the current theme preference"""
+  uuid: UUID!
+}
+
+type ThemePreference {
+  """Unique Readable Identifier for the current theme preference"""
+  slugId: String!
+
+  """What will affect this preference"""
+  themeAspect: String!
+
+  """Readable identifier of the current configuration"""
+  title: String!
+
+  """Users with this configuration"""
+  users: [User!]
+
+  """Unique Identifier for the current theme preference"""
+  uuid: UUID!
+
+  """Value of the theme preference"""
+  value: String!
+}
+
+type Transaction {
+  """The amount of money involved in the operation"""
+  amount: Float!
+
+  """The timestamp for when it was registered the transaction"""
+  created_at: DateTime!
+
+  """The date of the transaction"""
+  date: DateTime!
+
+  """The timestamp for when it was deleted the transaction"""
+  deleted_at: DateTime
+
+  """Term of the transaction"""
+  term: Term!
+
+  """Transaction History of the transaction"""
+  transactionHistory: TransactionHistory!
+
+  """Operation type"""
+  type: String!
+
+  """The timestamp for when it was updated the transaction"""
+  updated_at: DateTime!
+
+  """User of the transaction"""
+  user: User!
+
+  """Unique Identifier for the current transaction"""
+  uuid: UUID!
+}
+
+type TransactionDetail {
+  """Amount of the transaction"""
+  amount: Float!
+
+  """The timestamp for when it was registered the transaction"""
+  created_at: DateTime!
+
+  """The date of the transaction detail"""
+  date: DateTime!
+
+  """The timestamp for when it was deleted the transaction"""
+  deleted_at: DateTime
+
+  """Optional description of the current detail"""
+  description: String
+
+  """Actual amount of expense if applies"""
+  realExpense: Float!
+
+  """Actual amount of income if applies"""
+  realIncome: Float!
+
+  """Transaction parent of the current detail"""
+  transaction: Transaction!
+
+  """The timestamp for when it was updated the transaction"""
+  updated_at: DateTime!
+
+  """Unique Identifier for the current transaction"""
+  uuid: UUID!
+}
+
+type TransactionHistory {
+  """The timestamp for when it was registered the history"""
+  created_at: DateTime!
+
+  """The timestamp for when it was deleted the history"""
+  deleted_at: DateTime
+
+  """The owner of the transaction history"""
+  term: Term!
+
+  """List of transactions for the current History"""
+  transactions: [Transaction!]!
+
+  """The timestamp for when it was updated the history data"""
+  updated_at: DateTime!
+
+  """The owner of the transaction history"""
+  user: User!
+
+  """Unique Identifier for the current transaction history"""
+  uuid: UUID!
+}
+
+"""
+The `UUID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The UUID type is a 128-bit label, when it's generated according to the standard methods, UUID's are, for practical purposes, unique.
+"""
+scalar UUID
+
+type User {
+  """Current user's accounts"""
+  accounts: [Account!]!
+
+  """Budgets of the current user"""
+  budgets: [Budget!]!
+
+  """The timestamp for when it was registered the user"""
+  created_at: DateTime!
+
+  """The timestamp for when it was deleted the user"""
+  deleted_at: DateTime
+
+  """User's email"""
+  email: String!
+
+  """Financial states for the current user"""
+  financialStates: [FinancialState!]!
+
+  """User's keys for other security features"""
+  keyHashes: [KeyHash!]
+
+  """User's password hash for authentication"""
+  passwordHash: String!
+
+  """User's password salt for authentication"""
+  passwordSalt: String!
+
+  """User's preferences for the system"""
+  preferences: [Configuration!]!
+
+  """User's roles"""
+  roles: [Role!]!
+
+  """User's visual preferences"""
+  themePreferences: [ThemePreference!]!
+
+  """Transaction histories for the current user"""
+  transactionHistories: [TransactionHistory!]!
+
+  """Transaction histories for the current user"""
+  transactions: [Transaction!]!
+
+  """User's key for 2fa"""
+  twofactorKey: String
+
+  """The timestamp for when it was updated the user"""
+  updated_at: DateTime!
+
+  """User Profile of the current User"""
+  userProfile: UserProfile!
+
+  """User's Username"""
+  username: String!
+
+  """Unique Identifier for the current user"""
+  uuid: UUID!
+}
+
+type UserProfile {
+  """Url where the avatar is stored"""
+  avatarUrl: String!
+
+  """Url where the background image is stored"""
+  backgroundUrl: String!
+
+  """Family name of the user"""
+  familyName: String!
+
+  """Given name of the user"""
+  givenName: String!
+
+  """User associated to this profile"""
+  user: User!
+
+  """Unique Identifier for the current user profile"""
+  uuid: UUID!
+}

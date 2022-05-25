@@ -1,0 +1,24 @@
+{
+   "type": "postgres",
+   "host": "localhost",
+   "port": 5432,
+   "username": "fpss",
+   "password": "fpss",
+   "database": "fpss",
+   "synchronize": false,
+   "logging": false,
+   "entities": [
+      "dist/models/*.model.js"
+   ],
+   "migrations": [
+      "dist/migrations/*.js"
+   ],
+   "subscribers": [
+      "dist/subscribers/*.subscriber.js"
+   ],
+   "cli": {
+      "entitiesDir": "src/models",
+      "migrationsDir": "src/migrations",
+      "subscribersDir": "src/subscribers"
+   }
+}

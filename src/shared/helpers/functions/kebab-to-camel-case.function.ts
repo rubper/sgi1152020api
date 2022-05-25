@@ -1,0 +1,1 @@
+export const kebabToCamelCase = (str) => str.replace(/-./g, substr=>substr[1].toUpperCase());
