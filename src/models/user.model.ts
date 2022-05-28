@@ -1,5 +1,6 @@
+import { Role } from './role.model';
 import { UUID } from 'types/uuid.type';
-import { IRole } from 'auth/interfaces/role.interface';
+import { UserProfile } from './user-profile.model';
 import { IUser } from 'auth/interfaces/user.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
 
@@ -9,8 +10,10 @@ export class User extends BuildableEntity<IUser> implements IUser {
   passwordHash: string;
   passwordSalt: string;
   secretHash?: string;
-  roles?: IRole[];
+  roles?: Role[];
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+  profile: UserProfile;
 }
+

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PasswordHash } from 'auth/interfaces/password-hash.interface';
+import { PasswordHash } from 'auth/interfaces/_password-hash.interface';
 import { compare, genSalt, hash } from 'bcrypt';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 

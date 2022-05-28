@@ -1,3 +1,3 @@
-import { AccountTypes } from 'constants/account-types.constant';
+import { TourTypes } from 'constants/tour-types.constant';
 
-export type AccountType = AccountTypes.INCOME | AccountTypes.EXPENSE;
+export type TourType = `${TourTypes}`;
