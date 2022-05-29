@@ -14,13 +14,13 @@ export class CustomLogger implements LoggerService {
   constructor () {
     this._dateInstance = moment();
     try {
-      console.log('Creating logs directory...')
+      console.log(`[ 'AppInfo' ] Creating logs directory...`);
       fs.mkdirSync('./logs');
     } catch (e) {
       if (e.code === 'EEXIST') {
-        console.error('ERROR: Logs directory already exists!')
+        console.warn(`[ 'AppWarning' ] Logs directory already exists!`);
       }
-      console.warn('Could not create logs directory, skipping...')
+      console.warn(`[ 'AppWarning' ] Could not create logs directory, skipping...`);
     }
     this._logFile = fs.createWriteStream('./logs/general.log', {flags:'a+'});
     this._errorFile = fs.createWriteStream('./logs/error.log', {flags:'a+'});
