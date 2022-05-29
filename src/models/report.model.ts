@@ -1,6 +1,5 @@
 import { User } from './user.model';
 import { UUID } from 'types/uuid.type';
-import { DataValue } from 'types/data-value.type';
 import { ReportDetail } from 'models/report-detail.model';
 import { ReportTypes } from 'constants/report-types.constant';
 
@@ -18,7 +17,7 @@ export class Report extends BuildableEntity<IReport> implements IReport {
   @Column({type: 'timestamp', default: moment().toISOString()})
   date: Moment;
 
-  @Column()
+  @Column({length: 50})
   type: ReportTypes;
   
   // relationships

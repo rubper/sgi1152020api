@@ -23,7 +23,7 @@ export class UserProfile extends BuildableEntity<IUserProfile> implements IUserP
   @Column({nullable: true})
   email?: string;
 
-  @Column({nullable: true})
+  @Column({nullable: true, type: 'text'})
   additionalPhonesString?: string;
 
   // relationships

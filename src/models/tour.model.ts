@@ -16,7 +16,7 @@ export class Tour extends BuildableEntity<ITour> implements ITour {
   @Column({type: 'timestamp'})
   date: Moment;
 
-  @Column()
+  @Column({length: 50})
   type: TourTypes;
 
   @CreateDateColumn()
