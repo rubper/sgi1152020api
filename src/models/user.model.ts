@@ -7,6 +7,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, Primar
 import { Guide } from './guide.model';
 import { Report } from './report.model';
 import { Sale } from './sale.model';
+import { Session } from './user-session.model';
 
 @Entity()
 export class User extends BuildableEntity<IUser> implements IUser {
@@ -49,5 +50,8 @@ export class User extends BuildableEntity<IUser> implements IUser {
 
   @OneToMany(type => Sale, sale => sale.seller)
   sales?: Sale[];
+
+  @OneToMany(type => Session, session => session.user)
+  sessions?: Session[];
 }
 
