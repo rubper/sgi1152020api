@@ -3,12 +3,14 @@ import { ITimestampable } from 'interfaces/_timestampable.interface';
 
 import { IRole } from './role.interface';
 import { IUserProfile } from 'interfaces/user-profile.interface';
+import { ISale } from 'interfaces/sale.interface';
 
 export interface IUser extends IResource, ITimestampable {
   username: string;
   passwordHash: string;
   passwordSalt: string;
   secretHash?: string;
-  roles?: IRole[];
   profile: IUserProfile;
+  roles?: IRole[];
+  sales?: ISale[];
 }
