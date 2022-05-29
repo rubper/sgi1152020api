@@ -7,5 +7,5 @@ export interface IUserProfile extends IResource {
   lastName: string;
   phone?: string;
   email?: string;
-  additionalPhones?: string[];
+  additionalPhonesString?: string;
 }

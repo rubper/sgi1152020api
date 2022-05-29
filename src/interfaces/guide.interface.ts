@@ -13,5 +13,5 @@ export interface IGuide extends IResource, ITimestampable {
   volunteershipStart: Moment;
   volunteershipEnd?: Moment;
 
-  toursHistory: ITour[];
+  toursHistory?: ITour[];
 }
