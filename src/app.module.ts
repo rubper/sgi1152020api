@@ -14,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
 import { ResolversModule } from './resolvers/resolvers.module';
 
 import { ControllersModule } from 'controllers/controllers.module';
+import { AuthControllersModule } from 'auth/controllers/auth-controllers.module';
 
 export const graphQlModuleOptions: GqlModuleOptions = {
   driver: ApolloDriver,
@@ -28,6 +29,7 @@ export const graphQlModuleOptions: GqlModuleOptions = {
     SharedModule,
     ResolversModule,
     ControllersModule,
+    AuthControllersModule,
     // GraphQLModule.forRoot<ApolloDriverConfig>(graphQlModuleOptions),
     TypeOrmModule.forRoot(),
     ConfigModule.forRoot({

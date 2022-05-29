@@ -1,5 +1,8 @@
+import { Session } from 'models/user-session.model';
+
 export interface LoginResult {
   success: boolean;
-  token?: string;
   message: string;
+  token?: string;
+  session?: Session;
 }

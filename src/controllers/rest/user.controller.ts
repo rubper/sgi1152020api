@@ -3,14 +3,18 @@ import { UserService } from 'core/services/user.service';
 import { IUser } from 'auth/interfaces/user.interface';
 import { CreateDTO } from 'shared/helpers/base/create-dto.type';
 import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { SecurityService } from 'auth/services/security.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private _securityService: SecurityService,
+  ) {}
 
-  @Post()
+  @Post('register')
   create(@Body() createUserDto: CreateDTO<IUser>) {
-    return this.userService.create(createUserDto);
+    return this._securityService.register(createUserDto);
   }
 
   @Get()

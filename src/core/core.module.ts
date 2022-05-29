@@ -5,6 +5,7 @@ import { RoleService } from './services/role.service';
 import { SaleService } from './services/sale.service';
 import { TourService } from './services/tour.service';
 import { UserProfileService } from './services/user-profile.service';
+import { UserSessionService } from './services/user-session.service';
 import { UserService } from './services/user.service';
 
 @Global()
@@ -16,6 +17,7 @@ import { UserService } from './services/user.service';
     SaleService,
     TourService,
     UserProfileService,
+    UserSessionService,
     UserService,
   ],
   providers: [
@@ -25,6 +27,7 @@ import { UserService } from './services/user.service';
     SaleService,
     TourService,
     UserProfileService,
+    UserSessionService,
     UserService,
   ]
 })
