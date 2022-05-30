@@ -24,8 +24,7 @@ export class AuthController {
 
   @Post('logout')
   logout(@Headers() headers, @Body() bodyRequest: LogoutRequest) {
-    const token = headers['Authorization'];
-    const tokenObject = decode(token) as JwtPayload;
-    return this._securityService.logout(tokenObject.sub);
+    const token = headers['authorization'];
+    return this._securityService.logout(token);
   }
 }

@@ -1,10 +1,10 @@
 import { config } from 'dotenv';
 import { writeFile } from 'fs/promises';
-import { ConnectionOptions } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): string | NodeJS.ArrayBufferView {
-  const sslConfig = evaluateLiteralFlag(envConfig.PRODUCTION) ? {
+  const isProd = evaluateLiteralFlag(envConfig.PRODUCTION || 'false');
+  const sslConfig = isProd ? {
     ssl: {
       rejectUnauthorized: false
     }
@@ -14,7 +14,7 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
     url: envConfig.DATABASE_URL,
     synchronize: evaluateLiteralFlag(envConfig.PG_SYNCDB),
     logging: evaluateLiteralFlag(envConfig.LOGGING),
-    ssl: evaluateLiteralFlag(envConfig.PRODUCTION) ? true : false,
+    ssl: isProd ? true : false,
     schema: 'public',
     entities: [
         'dist/src/models/*.model.js'
@@ -79,7 +79,7 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
 }
 
 export function getProductionFlag(): boolean {
-  return evaluateLiteralFlag(process.env.PRODUCTION);
+  return evaluateLiteralFlag(process.env.PRODUCTION || 'false');
 }
 
 export function evaluateLiteralFlag(flag: string) {

@@ -11,7 +11,7 @@ import { UUID } from 'types/uuid.type';
 @Injectable()
 export class UserService {
   create(createDto: CreateDTO<IUser>) {
-    new User(createDto).save();
+    return new User(createDto).save();
   }
 
   findAll() {
@@ -28,7 +28,7 @@ export class UserService {
       user$ = user;
     } else if (user instanceof User) {
       user$ = of(user);
-    } else if (isUUIDValid(user)) {
+    } else if (isUUIDValid(user)) {      
       user$ = from(
         this.findOne(user)
       );

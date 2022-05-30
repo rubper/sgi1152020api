@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { compare, genSalt, hash } from 'bcrypt';
-import { sign, SignOptions } from 'jsonwebtoken';
+import { decode, JwtPayload, sign, SignOptions } from 'jsonwebtoken';
 import { catchError, combineLatest, from, map,  Observable, of, switchMap, throwError } from 'rxjs';
 
 import { Role } from 'models/role.model';
 import { User } from 'models/user.model';
 
 import { Secrets } from 'constants/secrets.constant';
-import { Separators } from 'constants/separators.constant';
 
 import { UserService } from 'core/services/user.service';
 
@@ -23,6 +22,7 @@ import { DbFilter } from 'types/_db-filter-params.type';
 import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 import { ActiveSessionResult } from 'auth/interfaces/_active-session-result.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
+import { FindOperator } from 'typeorm';
 
 const LOGIN_ERROR = 'loginfailure';
 
@@ -92,46 +92,70 @@ export class SecurityService {
    */
   login(username: string, password: string, passwordConfirmation: string): Observable<LoginResult> {
     // get user object with username
-    const user$ = from(this._userService.findByUsername(username));
-    return user$.pipe(
-      switchMap(
-        (user: User) => combineLatest([
-          of(user),
-          this.verifyPassword(password, passwordConfirmation, user.passwordHash),
-        ])
-      ),
-      switchMap(
-        ([user, success]: [User, boolean]) => {
-          const result = this.createLoginResult(user, success);
-          if (!result.success) {
-            const loginFailure = new Error(result.message);
-            loginFailure.name = LOGIN_ERROR;
-            return throwError(() => loginFailure)
+    return from(this._userService.findByUsername(username))
+      .pipe(
+        switchMap(
+          (user: User) => combineLatest([
+            of(user),
+            this.hasActiveSession(user.uuid)
+          ])
+        ),
+        map(
+          ([user, result]: [User, ActiveSessionResult]) => {
+            if (result.hasActiveSession) {                 
+              if (result.hasActiveSession) {
+                result.activeSessions.forEach(
+                  (session: Session) => {
+                    session.isActive = false;
+                    session.sessionEnd = moment();
+                    session.save();
+                    session.softRemove();
+                    session.save();
+                  }
+                );
+              }
+            }
+            return user
           }
-          return combineLatest([ 
-            of(result),
-            this.createUserSession(result.token, user)
-          ]);
-        }
-      ),
-      catchError(
-        (error: Error) => {
-          console.error(error);
-          const errorResult: LoginResult = {
-            success: false,
-            message: LOGIN_ERROR
-          };
-          return of(errorResult);
-        }
-      ),
-      map(
-        ([sessionlessResult, session]: [LoginResult, Session]): LoginResult => {
-          const result = sessionlessResult;
-          result.session = session;
-          return result;
-        }
-      )
-    )
+        ),
+        switchMap(
+          (user: User) => combineLatest([
+            of(user),
+            this.verifyPassword(password, passwordConfirmation, user.passwordHash),
+          ])
+        ),
+        switchMap(
+          ([user, success]: [User, boolean]) => {
+            const result = this.createLoginResult(user, success);
+            if (!result.success) {
+              const loginFailure = new Error(result.message);
+              loginFailure.name = LOGIN_ERROR;
+              return throwError(() => loginFailure)
+            }
+            return combineLatest([ 
+              of(result),
+              this.createUserSession(result.token, user)
+            ]);
+          }
+        ),
+        catchError(
+          (error: Error) => {
+            console.error(error);
+            const errorResult: LoginResult = {
+              success: false,
+              message: LOGIN_ERROR
+            };
+            return of(errorResult);
+          }
+        ),
+        map(
+          ([sessionlessResult, session]: [LoginResult, Session]): LoginResult => {
+            const result = sessionlessResult;
+            result.session = session;
+            return result;
+          }
+        )
+      );
   }
   
   register(registerData: RegisterRequest): Observable<RegisterResult> {
@@ -187,30 +211,40 @@ export class SecurityService {
       );
   }
 
-  logout(userId: UUID): Observable<boolean> {
-    const user$ = this._userService.searchUser(userId);
-    return this.getLatestUserSession(user$)
-      .pipe(
-        switchMap(
-          (session: Session) => {
-            return this.revokeToken(session);
-          }
-        )
-      )
+  logout(authorizationHeader: string): Observable<boolean> {
+    const accessToken = authorizationHeader.split('Bearer ')[1].trim();
+    const tokenObject = decode(accessToken) as JwtPayload;
+    const userId: UUID = tokenObject.sub;
+    return this.revokeToken(userId);
   }
 
-  revokeToken(session: Session): Observable<boolean> {
-    session.isActive = false;
-    session.sessionEnd = moment();
-    session.save();
-    session.softRemove();
-    return this.hasActiveSession(session.user)
-      .pipe(
-        map(
-          (result: ActiveSessionResult) => !result.hasActiveSession
-        )
-      );
-  } 
+  revokeToken(userId: UUID): Observable<boolean> {
+    return this.hasActiveSession(userId)
+    .pipe(
+      switchMap(
+        (result: ActiveSessionResult): Observable<[Session, Session][]> => {     
+          let sessions$: Observable<[Session, Session]>[] = [];
+          if (result.hasActiveSession) {
+            result.activeSessions.forEach(
+              (session: Session) => {
+                session.isActive = false;
+                session.sessionEnd = moment();
+                sessions$.push(combineLatest([
+                  from(session.save()),
+                  from(session.softRemove())
+                ]));
+              }
+            );
+            return combineLatest(sessions$);
+          }
+          return of([]);
+        }
+      ),
+      map(
+        (value: [Session, Session][]) => value.every(([saveSession, removeSession]: [Session, Session]) => !saveSession.isActive && !removeSession.isActive)
+      )
+    );
+  }
 
   hasActiveSession(user: UUID | User): Observable<ActiveSessionResult> {
     let user$: Observable<User>;
@@ -223,15 +257,18 @@ export class SecurityService {
       .pipe(
         switchMap(
           // get all user sessions
-          (userObject: User) => from(
-            this._userSessionService.search({
-              'user': { value: userObject },
-              'isActive': { value: true }
-            })
-          )
+          (userObject: User) => {            
+            return from(
+              this._userSessionService.search({
+                'user': { value: userObject.uuid, operator: 'equal' },
+                'isActive': { value: true, operator: 'equal' }
+              })
+            )
+          }
         ),
         map(
           (sessions: Session[]) => {
+            
             return {
               hasActiveSession: sessions.length !== 0,
               activeSessions: sessions
@@ -300,7 +337,7 @@ export class SecurityService {
             if(result.hasActiveSession) {
               result.activeSessions.forEach(
                 (activeSession: Session) => {
-                  this.revokeToken(activeSession);
+                  this.revokeToken(activeSession.uuid);
                 }
               )
             }
@@ -332,8 +369,9 @@ export class SecurityService {
       .pipe(
         switchMap(
           (userObject: User) => {
-            const userFilter: DbFilter<User> = {
-              value: userObject
+            const userFilter: DbFilter<string> = {
+              value: userObject.uuid, 
+              operator: 'equal' 
             };
             return from (
               this._userSessionService.search(
@@ -345,9 +383,7 @@ export class SecurityService {
             )
           }
         ),
-        map(
-          (sessions: Session[]) => sessions[0]
-        )
+        map( (sessions: Session[]) => sessions[0] )
       )
   }
 }

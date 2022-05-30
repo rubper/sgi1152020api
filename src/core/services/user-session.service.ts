@@ -21,7 +21,9 @@ export class UserSessionService {
   }
 
   search(filters: DbFilterParams<Session>, order?: TypeORMOrder<Session>) {
-    return Session.search<Session>(filters, order);
+    return Session.find<Session>(
+      Session.getSearchParams<Session>(filters, order)
+    );
   }
 
   update(id: string, updateDto: UpdateDTO<ISession>) {

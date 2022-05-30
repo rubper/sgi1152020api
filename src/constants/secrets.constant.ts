@@ -1,3 +1,4 @@
+import { env } from 'process';
 export const Secrets = {
-  PASSWORD: process.env.PASSWORD_SECRET,
+  PASSWORD: env.PASSWORD_SECRET || 'sgi1152022',
 }

@@ -4,6 +4,7 @@ import { UpdateDTO } from './update-dto.type';
 import { IResource } from 'interfaces/_resource.interface';
 import { DbFilterParams } from 'types/_db-filter-params.type';
 import { EntityFieldsNames } from 'typeorm/common/EntityFieldsNames';
+import { SearchParams } from 'auth/interfaces/_search-params.interface';
 
 export type TypeORMOrder<T = any> = {
   [P in EntityFieldsNames<T>]?: "ASC" | "DESC" | 1 | -1;
@@ -46,7 +47,7 @@ export class BuildableEntity<T extends IResource> extends BaseEntity {
    * @param filter the filter set, or array of sets to execute the query
    * @returns the entities that matches with the given filters
    */
-  static search<T extends IResource & BaseEntity>(this: ObjectType<T>, filter: DbFilterParams<T> | DbFilterParams<T>[], order?: TypeORMOrder<T>): Promise<T[]> {
+  static getSearchParams<T extends IResource & BaseEntity>(this: ObjectType<T>, filter: DbFilterParams<T> | DbFilterParams<T>[], order?: TypeORMOrder<T>): SearchParams<T> {
     let findConditions: FindConditions<T> | FindConditions<T>[];
     if (filter instanceof Array) {
       const conditions: FindConditions<T>[] = [];
@@ -58,10 +59,10 @@ export class BuildableEntity<T extends IResource> extends BaseEntity {
     } else {
       findConditions = BuildableEntity.generateFindConditions<T>(filter);
     }
-    return BuildableEntity.find<T>({
+    return {
       order,
       where: findConditions,
-    });
+    };
   }
 
   /**
