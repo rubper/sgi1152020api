@@ -26,7 +26,7 @@
       "generate:controllers": "ts-node ./src/scripts/controller-generator.script",
       "generate:gqlresolvers": "ts-node ./src/scripts/graphql-resolver-generator.script",
       "typeorm": "npm run build && ts-node --require ts-node/register ./node_modules/typeorm/cli.js",
-      "typeorm:prod": "node --require ts-node/register ./node_modules/typeorm/cli.js"
+      "typeorm:prod": "node ./node_modules/typeorm/cli.js"
 
    },
    "dependencies": {
