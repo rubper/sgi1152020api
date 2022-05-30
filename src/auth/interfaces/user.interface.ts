@@ -5,6 +5,7 @@ import { IRole } from './role.interface';
 import { IUserProfile } from 'interfaces/user-profile.interface';
 import { ISale } from 'interfaces/sale.interface';
 import { ISession } from './session.interface';
+import { Guide } from 'models/guide.model';
 
 export interface IUser extends IResource, ITimestampable {
   username: string;
@@ -15,4 +16,5 @@ export interface IUser extends IResource, ITimestampable {
   roles?: IRole[];
   sales?: ISale[];
   sessions?: ISession[];
+  guide?: Guide;
 }
