@@ -11,14 +11,15 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
     database: envConfig.PG_DB,
     synchronize: envConfig.PG_SYNCDB,
     logging: envConfig.LOGGING,
+    schema: 'public',
     entities: [
-        'dist/models/*.model.js'
+        'dist/src/models/*.model.js'
     ],
     migrations: [
-        'dist/migrations/*.js'
+        'dist/src/migrations/*.js'
     ],
     subscribers: [
-        'dist/subscribers/*.subscriber.js'
+        'dist/src/subscribers/*.subscriber.js'
     ],
     cli: {
         entitiesDir: 'src/models',

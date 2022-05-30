@@ -2,16 +2,11 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-import * as pjson from '../package.json';
 import { AppModule } from './app.module';
 import { getProductionFlag, setupEnvironment } from 'setup';
 import { CustomLogger } from 'loggers/custom.logger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-
-// constants for basic app metadata
-export const APP_TITLE: string = 'SGI-Tin Marin API'; 
-export const APP_DESCRIPTION: string = pjson.description; 
-export const APP_VERSION: string = pjson.version;
+import { APP_TITLE, APP_DESCRIPTION, APP_VERSION } from 'constants/system.constant';
 export let PRODUCTION: boolean;
 // environment variable object
 export let ENV: Record<string,string>;
