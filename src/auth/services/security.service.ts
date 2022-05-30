@@ -251,14 +251,11 @@ export class SecurityService {
    */
   createLoginResult(user: User, success: boolean): LoginResult {
     const username = user.username;
-    // get roles string
-    const rolesArray = user.roles.map((role: Role, index: number) => {
-      if (index !== user.roles.length - 1) {
-        return `${role.name}${Separators.DATA}`;
-      }
-      return role.name;
-    });
-    const roles = ''.concat(...rolesArray);
+    // get roles string array
+    const roles = user.roles.map((role: Role) => ({
+      id: role.uuid, 
+      name: role.name
+    }));
 
     // prepare response
     let token: string;
