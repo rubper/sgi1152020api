@@ -38,7 +38,7 @@ async function bootstrap() {
   };
   app.enableCors(corsConfig);
   // listen app in port 3000
-  await app.listen(3000, PRODUCTION ? '0.0.0.0' : 'localhost' , () => {});
+  await app.listen(PRODUCTION ? 443 : 3000, PRODUCTION ? '0.0.0.0' : 'localhost' , () => {});
 }
 
 bootstrap();
