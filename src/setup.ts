@@ -4,11 +4,17 @@ import { ConnectionOptions } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): string | NodeJS.ArrayBufferView {
+  const sslConfig = evaluateLiteralFlag(envConfig.PRODUCTION) ? {
+    ssl: {
+      rejectUnauthorized: false
+    }
+  } : undefined;
   const ormConfigObject: PostgresConnectionOptions = {
     type: 'postgres',
     url: envConfig.DATABASE_URL,
     synchronize: evaluateLiteralFlag(envConfig.PG_SYNCDB),
     logging: evaluateLiteralFlag(envConfig.LOGGING),
+    ssl: evaluateLiteralFlag(envConfig.PRODUCTION) ? true : false,
     schema: 'public',
     entities: [
         'dist/src/models/*.model.js'
@@ -23,8 +29,9 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
         entitiesDir: 'src/models',
         migrationsDir: 'src/migrations',
         subscribersDir: 'src/subscribers'
-    }
-  }  
+    },
+    extra: sslConfig
+  }
   return JSON.stringify(ormConfigObject);
 }
 
