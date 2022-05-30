@@ -1,16 +1,19 @@
 import { config } from 'dotenv';
 import { writeFile } from 'fs/promises';
+import { ConnectionOptions } from 'typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): string | NodeJS.ArrayBufferView {
-  const ormConfigObject = {
+  const ormConfigObject: PostgresConnectionOptions = {
     type: 'postgres',
     host: envConfig.PG_HOST,
-    port: envConfig.PG_PORT,
+    port: Number(envConfig.PG_PORT) || 5432,
     username: envConfig.PG_USER,
     password: envConfig.PG_PASS,
     database: envConfig.PG_DB,
-    synchronize: envConfig.PG_SYNCDB,
-    logging: envConfig.LOGGING,
+    synchronize: evaluateLiteralFlag(envConfig.PG_SYNCDB),
+    logging: evaluateLiteralFlag(envConfig.LOGGING),
+    ssl: evaluateLiteralFlag(envConfig.PRODUCTION) ? true : false,
     schema: 'public',
     entities: [
         'dist/src/models/*.model.js'
@@ -74,7 +77,11 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
 }
 
 export function getProductionFlag(): boolean {
-  const trimmedVar = process.env.PRODUCTION.trim();
+  return evaluateLiteralFlag(process.env.PRODUCTION);
+}
+
+export function evaluateLiteralFlag(flag: string) {
+  const trimmedVar = flag.trim();
   if (trimmedVar === 'true') {
     return true;
   } else if (trimmedVar === 'false') {
@@ -82,6 +89,7 @@ export function getProductionFlag(): boolean {
   } else if (trimmedVar.length === 0) {
     return undefined;
   } else {
-    throw new Error('Invalid value, please provide a boolean value for PRODUCTION environment variable');
+    throw new Error('Invalid value, please provide a boolean value for flag');
   }
+
 }
