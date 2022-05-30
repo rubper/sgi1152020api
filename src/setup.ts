@@ -6,14 +6,9 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): string | NodeJS.ArrayBufferView {
   const ormConfigObject: PostgresConnectionOptions = {
     type: 'postgres',
-    host: envConfig.PG_HOST,
-    port: Number(envConfig.PG_PORT) || 5432,
-    username: envConfig.PG_USER,
-    password: envConfig.PG_PASS,
-    database: envConfig.PG_DB,
+    url: envConfig.DATABASE_URL,
     synchronize: evaluateLiteralFlag(envConfig.PG_SYNCDB),
     logging: evaluateLiteralFlag(envConfig.LOGGING),
-    ssl: evaluateLiteralFlag(envConfig.PRODUCTION) ? true : false,
     schema: 'public',
     entities: [
         'dist/src/models/*.model.js'
