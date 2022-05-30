@@ -252,10 +252,11 @@ export class SecurityService {
   createLoginResult(user: User, success: boolean): LoginResult {
     const username = user.username;
     // get roles string array
-    const roles = user.roles.map((role: Role) => ({
+    const userRoles = user.roles;
+    const roles = userRoles ? user.roles.map((role: Role) => ({
       id: role.uuid, 
       name: role.name
-    }));
+    })) : [];
 
     // prepare response
     let token: string;
