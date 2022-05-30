@@ -3,7 +3,7 @@ import { UUID } from 'types/uuid.type';
 import { UserProfile } from './user-profile.model';
 import { IUser } from 'auth/interfaces/user.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToMany } from 'typeorm';
 import { Guide } from './guide.model';
 import { Report } from './report.model';
 import { Sale } from './sale.model';
@@ -26,7 +26,7 @@ export class User extends BuildableEntity<IUser> implements IUser {
   @Column({nullable: true})
   secretHash?: string;
 
-  @OneToMany(type => Role, role => role.users)
+  @ManyToMany(type => Role, role => role.users)
   roles?: Role[];
 
   @CreateDateColumn()
@@ -42,8 +42,8 @@ export class User extends BuildableEntity<IUser> implements IUser {
   profile: UserProfile;
 
   // relationships
-  @OneToMany(type => Guide, guide => guide.user)
-  guides?: Guide[];
+  @OneToOne(type => Guide, guide => guide.user, {nullable: true})
+  guide?: Guide;
 
   @OneToMany(type => Report, report => report.author)
   reports?: Report[];
