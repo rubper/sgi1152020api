@@ -4,6 +4,7 @@ import { IUser } from 'auth/interfaces/user.interface';
 import { CreateDTO } from 'shared/helpers/base/create-dto.type';
 import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 import { SecurityService } from 'auth/services/security.service';
+import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 
 @Controller('user')
 export class UserController {
@@ -13,7 +14,7 @@ export class UserController {
   ) {}
 
   @Post('register')
-  create(@Body() createUserDto: CreateDTO<IUser>) {
+  create(@Body() createUserDto: RegisterRequest) {
     return this._securityService.register(createUserDto);
   }
 

@@ -19,10 +19,10 @@ import { Session } from 'models/user-session.model';
 import moment from 'moment';
 import { CreateDTO } from 'shared/helpers/base/create-dto.type';
 import { UUID } from 'types/uuid.type';
-import { IUser } from 'auth/interfaces/user.interface';
 import { DbFilter } from 'types/_db-filter-params.type';
 import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 import { ActiveSessionResult } from 'auth/interfaces/_active-session-result.interface';
+import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 
 const LOGIN_ERROR = 'loginfailure';
 
@@ -134,10 +134,23 @@ export class SecurityService {
     )
   }
   
-  register(registerData: CreateDTO<IUser>): Observable<RegisterResult> {
-    const user = new User(registerData);
-    return from(user.save())
+  register(registerData: RegisterRequest): Observable<RegisterResult> {
+    const password = registerData.password.trim();
+    if (password !== registerData.passwordConfirmation.trim()) {
+      return throwError(() => new Error('password confirmation doesn\'t match'))
+    }
+    return this.generatePasswordHash(password)
       .pipe(
+        switchMap(
+          (hashResult: PasswordHash) => {
+            const user = new User({
+              username: registerData.username,
+              passwordHash: hashResult.hash,
+              passwordSalt: hashResult.salt,
+            });
+            return from(user.save());
+          }
+        ),
         switchMap(
           (savedUser: User) => {
             const result = this.createLoginResult(savedUser, true);

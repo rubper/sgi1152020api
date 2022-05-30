@@ -2,6 +2,7 @@ import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { IUser } from 'auth/interfaces/user.interface';
 import { LoginRequest } from 'auth/interfaces/_login-request.interface';
 import { LogoutRequest } from 'auth/interfaces/_logout-request.interface';
+import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { SecurityService } from 'auth/services/security.service';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { CreateDTO } from 'shared/helpers/base/create-dto.type';
@@ -18,7 +19,7 @@ export class AuthController {
   }
 
   @Post('register')
-  register(@Body() bodyRequest: CreateDTO<IUser>) {
+  register(@Body() bodyRequest: RegisterRequest) {
     return this._securityService.register(bodyRequest);
   }
 
