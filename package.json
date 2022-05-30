@@ -22,6 +22,7 @@
       "test:cov": "jest --coverage",
       "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
       "test:e2e": "jest --config ./test/jest-e2e.json",
+      "generate:env": "ts-node ./src/scripts/set-prod-env.script",
       "generate:services": "ts-node ./src/scripts/service-generator.script",
       "generate:controllers": "ts-node ./src/scripts/controller-generator.script",
       "generate:gqlresolvers": "ts-node ./src/scripts/graphql-resolver-generator.script",
