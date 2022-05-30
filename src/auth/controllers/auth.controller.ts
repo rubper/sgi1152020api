@@ -5,7 +5,6 @@ import { LogoutRequest } from 'auth/interfaces/_logout-request.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { SecurityService } from 'auth/services/security.service';
 import { decode, JwtPayload } from 'jsonwebtoken';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
 
 @Controller('auth')
 export class AuthController {
