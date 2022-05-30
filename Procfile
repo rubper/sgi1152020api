@@ -1,2 +1,2 @@
 
-web: npm install && npm run generate:env && npm run start:prod
+web: npm install && npm run nest:prod && npm run start:prod
