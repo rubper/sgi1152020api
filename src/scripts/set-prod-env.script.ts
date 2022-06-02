@@ -1,4 +1,4 @@
-import {rename, copyFile} from 'fs/promises';
+import {rename, copyFile, readFile} from 'fs/promises';
 async function setProdEnv() {
   try {
     await copyFile('prod.env', 'p.env');
@@ -11,6 +11,15 @@ async function setProdEnv() {
     console.log('renamed succesfully');
   } catch {
     console.error('error renaming'); 
+  }
+  try {
+    const buffer = await readFile('./.env');
+    console.log(buffer.toString());
+    
+  } catch (error) {
+    console.error('error reading .env'); 
+    console.error(error); 
+    
   }
 }
 setProdEnv();
