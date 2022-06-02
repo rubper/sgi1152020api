@@ -11,6 +11,7 @@
       "prebuild": "rimraf dist",
       "build": "nest build && npm run nest:prod && npm run setup:prod",
       "build:clean": "rimraf dist && nest build",
+      "build:prod": "npm run build && npm run nest:prod",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "nest start --watch",
       "start:dev": "nest start --watch",
