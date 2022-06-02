@@ -8,8 +8,8 @@
    "scripts": {
       "nest:prod": "node dist/src/scripts/set-prod-env.script.js",
       "prebuild": "rimraf dist",
-      "build": "nest build",
-      "build:clean": "rimraf dist && nest build && npm run nest:prod",
+      "build": "nest build && npm run nest:prod",
+      "build:clean": "rimraf dist && nest build",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "nest start --watch",
       "start:dev": "nest start --watch",
