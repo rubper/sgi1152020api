@@ -92,6 +92,10 @@ export class User extends BuildableEntity<IUser> implements IUser {
   @OneToMany(() => Sale, sale => sale.seller)
   sales?: Sale[];
 
+  @ApiProperty({
+    description: 'Sesiones del usuario',
+    required: false
+  })
   @OneToMany(() => Session, session => session.user)
   sessions?: Session[];
 }

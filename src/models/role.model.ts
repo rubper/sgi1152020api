@@ -11,6 +11,7 @@ export class Role extends BuildableEntity<IRole> implements IRole {
   @ApiProperty({
     description: 'Identificador unico autogenerado del registro',
     required: false,
+    readOnly: true,
   })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;

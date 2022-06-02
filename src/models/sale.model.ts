@@ -25,21 +25,24 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
   
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la creacion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @CreateDateColumn()
   created_at: string;
   
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la edicion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @UpdateDateColumn()
   updated_at: string;
   
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la eliminacion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @DeleteDateColumn({nullable: true})
   deleted_at?: string;
@@ -48,30 +51,35 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
     description: 'Primer nombre del titular de la compra.',
     required: true
   })
+  @Column()
   ownerFirstName: string;
 
   @ApiProperty({
     description: 'Primer apellido del titular de la compra.',
     required: true
   })
+  @Column()
   ownerLastName: string;
 
   @ApiProperty({
     description: 'Numero unico de identidad DUI del titular.',
     required: true
   })
+  @Column({length: 10})
   identityDocument: string;
 
   @ApiProperty({
     description: 'Usuario del titular si existe.',
-    required: true
+    required: false
   })
+  @ManyToOne(() => User, user => user.sales, {nullable: true})
   user?: User;
 
   @ApiProperty({
     description: 'Visita asignada a los ticket de esta venta.',
     required: true
   })
+  @ManyToOne(() => Tour, tour => tour.salesHistory)
   tour: Tour;
   
   // relationships

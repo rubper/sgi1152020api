@@ -16,6 +16,7 @@ export class Report extends BuildableEntity<IReport> implements IReport {
   @ApiProperty({
     description: 'Identificador unico autogenerado del registro',
     required: false,
+    readOnly: true,
   })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;

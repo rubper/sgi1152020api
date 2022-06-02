@@ -13,7 +13,8 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Guide extends BuildableEntity<IGuide> implements IGuide {
   @ApiProperty({
     description: 'Identificador unico autogenerado del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;
@@ -50,21 +51,24 @@ export class Guide extends BuildableEntity<IGuide> implements IGuide {
   
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la creacion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @CreateDateColumn()
   created_at: string;
   
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la edicion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @UpdateDateColumn()
   updated_at: string;
   
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la eliminacion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @DeleteDateColumn({nullable: true})
   deleted_at?: string;

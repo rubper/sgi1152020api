@@ -6,8 +6,9 @@ import { ITour } from 'interfaces/tour.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
 
 import { Moment } from 'moment';
-import { Column, CreateDateColumn, DeleteDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Sale } from './sale.model';
 
 @Entity()
 export class Tour extends BuildableEntity<ITour> implements ITour {
@@ -34,21 +35,24 @@ export class Tour extends BuildableEntity<ITour> implements ITour {
 
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la creacion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @CreateDateColumn()
   created_at: string;
 
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la edicion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @UpdateDateColumn()
   updated_at: string;
 
   @ApiProperty({
     description: 'Estampa autogenerada de fecha que marca la eliminacion del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @DeleteDateColumn()
   deleted_at?: string;
@@ -58,6 +62,13 @@ export class Tour extends BuildableEntity<ITour> implements ITour {
     description: 'Guia asignado a la visita.',
     required: true
   })
-  @ManyToOne(type => Guide, guide => guide.toursHistory)
+  @ManyToOne(() => Guide, guide => guide.toursHistory)
   guide: Guide;
+
+  @ApiProperty({
+    description: 'Ventas que se han producido para esta visita.',
+    required: true
+  })
+  @OneToMany(() => Sale, sale => sale.tour, {nullable: true})
+  salesHistory?: Sale[];
 }

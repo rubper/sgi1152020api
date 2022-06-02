@@ -11,21 +11,22 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UserProfile extends BuildableEntity<IUserProfile> implements IUserProfile {
   @ApiProperty({
     description: 'Identificador unico autogenerado del registro',
-    required: false
+    required: false,
+    readOnly: true,
   })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;
 
   @ApiProperty({
     description: 'Primer nombre del usuario',
-    required: false
+    required: true
   })
   @Column()
   firstName: string;
 
   @ApiProperty({
     description: 'Primer apellido del usuario',
-    required: false
+    required: true
   })
   @Column()
   lastName: string;
