@@ -1,4 +1,5 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { IUser } from 'auth/interfaces/user.interface';
 import { LoginRequest } from 'auth/interfaces/_login-request.interface';
 import { LogoutRequest } from 'auth/interfaces/_logout-request.interface';
@@ -22,6 +23,7 @@ export class AuthController {
     return this._securityService.register(bodyRequest);
   }
 
+  @ApiBearerAuth()
   @Post('logout')
   logout(@Headers() headers, @Body() bodyRequest: LogoutRequest) {
     const token = headers['authorization'];
