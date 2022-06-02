@@ -108,4 +108,4 @@ export function evaluateLiteralFlag(flag: string) {
   return boolResult;
 }
 
-await setupEnvironment(getProductionFlag());
+setupEnvironment(getProductionFlag());
