@@ -22,14 +22,14 @@ export class Report extends BuildableEntity<IReport> implements IReport {
 
   @ApiProperty({
     description: 'Fecha del reporte',
-    required: false,
+    required: true,
   })
   @Column({type: 'timestamp'})
   date: Moment;
 
   @ApiProperty({
     description: 'Tipo del reporte',
-    required: false,
+    required: true,
   })
   @Column({length: 50})
   type: ReportTypes;
@@ -41,7 +41,7 @@ export class Report extends BuildableEntity<IReport> implements IReport {
       'es posible decidir, mediante esta bandera, el tipo de dato que ' +
       'se almacenará en los campos X, Y, y demás, del detalle de reporte.' +
       'Los valores permitidos son: \'valoresNumericos\' | \'valoresSeparadosComas\'',
-    required: false,
+    required: true,
   })
   @Column({length: 21})
   dataType: ValueTypes;
@@ -56,7 +56,7 @@ export class Report extends BuildableEntity<IReport> implements IReport {
 
   @ApiProperty({
     description: 'Autor del reporte',
-    required: false,
+    required: true,
   })
   @ManyToOne(type => User, user => user.reports)
   author: User;
