@@ -55,7 +55,7 @@ export async function createOrmConfig(envConfig: Record<string,string>): Promise
 export async function setupEnvironment(isProd: boolean): Promise< Record<string,string> | undefined > { 
   // config dotenv
   const configOutput = config({
-    path: isProd ? '.env' : 'dev.env'
+    path: isProd ? 'prod.env' : 'dev.env'
   });
 
   // handle output
