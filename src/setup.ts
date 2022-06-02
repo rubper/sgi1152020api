@@ -32,6 +32,8 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
     },
     extra: sslConfig
   }
+  console.log('ormConfigObject');
+  console.log(ormConfigObject);
   return JSON.stringify(ormConfigObject);
 }
 
@@ -68,7 +70,9 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
       console.warn(`[ 'AppWarning' ] Running in production mode!`);
     }
   
+    console.log(configOutput.parsed);
     // set up orm config
+    await createOrmConfig('parsed config');
     await createOrmConfig(configOutput.parsed);
     return configOutput.parsed;
   } else {
