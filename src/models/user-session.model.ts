@@ -31,6 +31,6 @@ export class Session extends BuildableEntity<ISession> implements ISession {
   deleted_at?: string;
 
   //relationships
-  @ManyToOne(type => User, user => user.sessions)
+  @ManyToOne(() => User, user => user.sessions)
   user: User;
 }

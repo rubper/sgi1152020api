@@ -4,19 +4,36 @@ import { UUID } from 'types/uuid.type';
 import { IRole } from 'auth/interfaces/role.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
 import { Entity, Column, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Role extends BuildableEntity<IRole> implements IRole {
+  @ApiProperty({
+    description: 'Identificador unico autogenerado del registro',
+    required: false,
+  })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;
 
+  @ApiProperty({
+    description: 'Nombre unico del rol',
+    required: false,
+  })
   @Column()
   name: string;
 
+  @ApiProperty({
+    description: 'Nombre del rol legible por humanos',
+    required: false,
+  })
   @Column({nullable: true})
   title?: string;
 
   // relationships
-  @ManyToMany(type => User, user => user.roles)
+  @ApiProperty({
+    description: 'Usuarios que poseen este rol',
+    required: false,
+  })
+  @ManyToMany(type => User, user => user.roles, {nullable: true})
   users?: User[];
 }

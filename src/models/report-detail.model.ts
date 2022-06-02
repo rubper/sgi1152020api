@@ -6,33 +6,66 @@ import { IReportDetail } from 'interfaces/report-detail.interface';
 import { UUID } from 'types/uuid.type';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Report } from './report.model';
+import { ApiProperty } from '@nestjs/swagger';
 
 export type DataAxis = 'x' | 'y' | 'z' | 'xx' | 'yy' | 'zz';
 
 @Entity()
 export class ReportDetail extends BuildableEntity<IReportDetail> implements IReportDetail{ 
+  @ApiProperty({
+    description: 'Identificador unico autogenerado del registro',
+    required: false,
+  })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;
 
+  @ApiProperty({
+    description: 'Valor en x del registro',
+    required: true
+  })
   @Column()
   x: string;
 
+  @ApiProperty({
+    description: 'Valor en y del registro',
+    required: true
+  })
   @Column()
   y: string;
 
+  @ApiProperty({
+    description: 'Valor opcional en z del registro',
+    required: false
+  })
   @Column({nullable: true})
   z?: string;
 
+  @ApiProperty({
+    description: 'Valor opcional en x auxiliar del registro',
+    required: false
+  })
   @Column({nullable: true})
   xx?: string;
 
+  @ApiProperty({
+    description: 'Valor opcional en y auxiliar del registro',
+    required: false
+  })
   @Column({nullable: true})
   yy?: string;
 
+  @ApiProperty({
+    description: 'Valor opcional en z auxiliar del registro',
+    required: false
+  })
   @Column({nullable: true})
   zz?: string;
 
   // relationships
+  @ApiProperty({
+    description: 'Reporte al que pertenece el registro',
+    required: false
+  })
   @ManyToOne(type => Report, report => report.reportDetails)
   report: Report;
 
