@@ -90,8 +90,10 @@ export function evaluateLiteralFlag(flag: string) {
   const trimmedVar = flag.trim();
   let boolResult: boolean | undefined;
   if (typeof trimmedVar === 'string') {
-    const isTrue: boolean = trimmedVar?.match(/^(true|yes|t|y|1)$/i).length > 0;
-    const isFalse: boolean = trimmedVar?.match(/^(false|no|f|n|0)$/i).length > 0;
+    const trueMatches = trimmedVar?.match(/^(true|yes|t|y|1)$/i);
+    const isTrue: boolean = trueMatches && trueMatches.length > 0;
+    const falseMatches = trimmedVar?.match(/^(false|no|f|n|0)$/i);
+    const isFalse: boolean = falseMatches && falseMatches.length > 0;
     if (!isTrue && !isFalse) {
       boolResult = undefined;
     } else {
