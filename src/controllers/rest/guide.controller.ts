@@ -5,8 +5,8 @@ import { IGuide } from 'interfaces/guide.interface';
 import { Guide } from 'models/guide.model';
 import { CreateDTO } from 'shared/helpers/base/create-dto.type';
 import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
-import { CreateGuideDTO } from 'interfaces/DTOs/guide-create.dto';
-import { UpdateGuideDTO } from 'interfaces/DTOs/guide-update.dto';
+import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
+import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
 
 @Controller('guide')
 export class GuideController {
