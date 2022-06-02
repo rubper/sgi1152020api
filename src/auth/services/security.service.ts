@@ -64,7 +64,6 @@ export class SecurityService {
   }
 
   /**
-   * Validates if the password matches it's confirmation, and if it does, 
    * compares the password with the stored password hash
    *
    * @param password password to verify
@@ -72,11 +71,7 @@ export class SecurityService {
    * @param passwordHash the stored hash of the password
    * @returns an observable confirming whether the password matches the stored hash
    */
-  verifyPassword(password: string, passwordConfirmation: string, passwordHash: string): Observable<boolean> {
-    // return false if confirmation doesnt match password
-    if (password !== passwordConfirmation) {
-      return of(false);
-    }
+  verifyPassword(password: string, passwordHash: string): Observable<boolean> {
     // compare password with saved hash
     return from(compare(password, passwordHash));
   }
@@ -90,7 +85,11 @@ export class SecurityService {
    * @param passwordConfirmation the confirmation of the password
    * @returns an observable with a login result
    */
-  login(username: string, password: string, passwordConfirmation: string): Observable<LoginResult> {
+  login(username: string, password: string, honeypot: string): Observable<LoginResult> {
+    // si hay valor en la trampa, parar ejecucion
+    if (!!honeypot) {
+      return;
+    }
     // get user object with username
     return from(this._userService.findByUsername(username))
       .pipe(
@@ -121,7 +120,7 @@ export class SecurityService {
         switchMap(
           (user: User) => combineLatest([
             of(user),
-            this.verifyPassword(password, passwordConfirmation, user.passwordHash),
+            this.verifyPassword(password, user.passwordHash),
           ])
         ),
         switchMap(
