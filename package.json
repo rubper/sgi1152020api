@@ -6,9 +6,10 @@
    "private": true,
    "license": "UNLICENSED",
    "scripts": {
-      "nest:prod": "node dist/src/scripts/set-prod-env.script.js",
+      "setup:prod": "node dist/src/scripts/set-prod-env.script.js",
+      "nest:prod": "node dist/src/setup.js",
       "prebuild": "rimraf dist",
-      "build": "nest build && npm run nest:prod",
+      "build": "nest build && npm run nest:prod && npm run setup:prod",
       "build:clean": "rimraf dist && nest build",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "nest start --watch",
