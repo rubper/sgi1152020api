@@ -14,7 +14,6 @@ export let ENV: Record<string,string>;
 async function bootstrap() {
   // set up app environment
   PRODUCTION = getProductionFlag() || false;
-  ENV = await setupEnvironment(PRODUCTION);
 
   // set up nest app
   const app = await NestFactory.create(AppModule, {
