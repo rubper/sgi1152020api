@@ -88,14 +88,24 @@ export function getProductionFlag(): boolean {
 
 export function evaluateLiteralFlag(flag: string) {
   const trimmedVar = flag.trim();
-  if (trimmedVar === 'true') {
-    return true;
-  } else if (trimmedVar === 'false') {
-    return false;
-  } else if (trimmedVar.length === 0) {
-    return undefined;
+  let boolResult: boolean | undefined;
+  if (typeof trimmedVar === 'string') {
+    const isTrue: boolean = trimmedVar?.match(/^(true|yes|t|y|1)$/i).length > 0;
+    const isFalse: boolean = trimmedVar?.match(/^(false|no|f|n|0)$/i).length > 0;
+    if (!isTrue && !isFalse) {
+      boolResult = undefined;
+    } else {
+      boolResult = isTrue ? true : false;
+    }
   } else {
-    throw new Error('Invalid value, please provide a boolean value for flag');
-  }
+    if (trimmedVar === (0 | 1)) {
+      boolResult = 1 ? true : false;
 
+    } else {
+      boolResult = undefined;
+    }
+  }
+  return boolResult;
 }
+
+await setupEnvironment(getProductionFlag());
