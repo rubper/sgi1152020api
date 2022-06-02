@@ -70,9 +70,9 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
       console.warn(`[ 'AppWarning' ] Running in production mode!`);
     }
   
+    console.log('parsed config');
     console.log(configOutput.parsed);
     // set up orm config
-    await createOrmConfig('parsed config');
     await createOrmConfig(configOutput.parsed);
     return configOutput.parsed;
   } else {
