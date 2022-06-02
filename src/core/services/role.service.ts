@@ -7,7 +7,7 @@ import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 @Injectable()
 export class RoleService {
   create(createDto: CreateDTO<IRole>) {
-    new Role(createDto).save();
+    return new Role(createDto).save();
   }
 
   findAll() {

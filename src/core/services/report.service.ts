@@ -7,7 +7,7 @@ import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 @Injectable()
 export class ReportService {
   create(createDto: CreateDTO<IReport>) {
-    new Report(createDto).save();
+    return new Report(createDto).save();
   }
 
   findAll() {

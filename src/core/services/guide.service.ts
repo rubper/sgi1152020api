@@ -7,7 +7,7 @@ import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 @Injectable()
 export class GuideService {
   create(createDto: CreateDTO<IGuide>) {
-    new Guide(createDto).save();
+    return new Guide(createDto).save();
   }
 
   findAll() {

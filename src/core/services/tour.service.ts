@@ -7,7 +7,7 @@ import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 @Injectable()
 export class TourService {
   create(createDto: CreateDTO<ITour>) {
-    new Tour(createDto).save();
+    return new Tour(createDto).save();
   }
 
   findAll() {

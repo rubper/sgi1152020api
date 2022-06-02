@@ -7,7 +7,7 @@ import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 @Injectable()
 export class SaleService {
   create(createDto: CreateDTO<ISale>) {
-    new Sale(createDto).save();
+    return new Sale(createDto).save();
   }
 
   findAll() {

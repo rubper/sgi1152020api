@@ -7,7 +7,7 @@ import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 @Injectable()
 export class UserProfileService {
   create(createDto: CreateDTO<IUserProfile>) {
-    new UserProfile(createDto).save();
+    return new UserProfile(createDto).save();
   }
 
   findAll() {
