@@ -12,7 +12,7 @@ export interface IUser extends IResource, ITimestampable {
   passwordHash: string;
   passwordSalt: string;
   secretHash?: string;
-  profile: IUserProfile;
+  profile?: IUserProfile;
   roles?: IRole[];
   sales?: ISale[];
   sessions?: ISession[];
