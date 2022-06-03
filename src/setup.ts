@@ -1,3 +1,4 @@
+import { DevEnvironment } from 'constants/dev-environment.constant';
 import { config, DotenvParseOutput } from 'dotenv';
 import { writeFile } from 'fs/promises';
 import { parseBoolean } from 'shared/helpers/functions/parse-boolean.function';
@@ -6,22 +7,23 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 /**
  * This creates the ormconfig object, and then stringifies it in JSON format
  *
- * @param envConfig - An object containing the environmental variables
  * @returns An string with the ormconfig content
  */
-export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): string {
-  const isProd = parseBoolean(envConfig.PRODUCTION || 'false');
+export function buildDatabaseEnvironmentJSON(): string {
+  const isProd = parseBoolean(process.env.PRODUCTION|| 'false');
   const sslConfig = isProd ? {
     ssl: {
       rejectUnauthorized: false
     }
   } : undefined;
+  const dbUrl = process.env.DATABASE_URL === 'undefined' ? undefined : process.env.DATABASE_URL;
+  const url = dbUrl || DevEnvironment.DATABASE_URL;
   const ormConfigObject: PostgresConnectionOptions = {
+    url,
     type: 'postgres',
-    url: envConfig.DATABASE_URL,
-    synchronize: parseBoolean(envConfig.PG_SYNCDB),
-    logging: parseBoolean(envConfig.LOGGING),
-    ssl: isProd ? true : false,
+    synchronize: parseBoolean(process.env.PG_SYNCDB),
+    logging: parseBoolean(process.env.LOGGING),
+    ssl: isProd,
     schema: 'public',
     entities: [
         'dist/src/models/*.model.js'
@@ -45,15 +47,14 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
 /**
  * Writes to the file system, the ormconfig generated with the buildDatabaseEnvironmentJSON function
  * 
- * @param envConfig - An object containing the environmental variables
  * @returns A promise that resolves a boolean confirming the success or fail of the operation
  */
-export async function writeOrmConfig(envConfig: Record<string,string>): Promise<boolean> {
+export async function writeOrmConfig(): Promise<boolean> {
   // set up database from environment
   try {
     await writeFile(
       'ormconfig.json', 
-      buildDatabaseEnvironmentJSON(envConfig)
+      buildDatabaseEnvironmentJSON()
     );
     console.info(`[ 'AppInfo' ] ORMConfig file generated successfuly.`);
     return true;
@@ -87,7 +88,7 @@ export async function setupEnvironment(isProd: boolean): Promise<DotenvParseOutp
       console.warn(`[ 'AppWarning' ] Running in production mode!`);
     }
     // set up orm config
-    const result = await writeOrmConfig(configOutput.parsed);
+    const result = await writeOrmConfig();
     if (result) {
       return configOutput.parsed;
     } else {

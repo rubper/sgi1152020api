@@ -1,11 +1,16 @@
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, Res } from '@nestjs/common';
+
+import { catchError, map, Observable, of } from 'rxjs';
+import { Response } from 'express';
 
 import { LoginBody } from 'auth/models/login.body-request';
+import { SgiResponse } from 'interfaces/_response.interface';
 import { RegisterBody } from 'auth/models/register.body-request';
-import { SecurityService } from 'auth/services/security.service';
+import { CONFIRMATION_ERROR, SecurityService } from 'auth/services/security.service';
 import { LoginRequest } from 'auth/interfaces/_login-request.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
+import { LoginResult } from 'auth/interfaces/_login-result.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -30,8 +35,33 @@ export class AuthController {
     description: 'Crea un usuario, inicia sesión con este, y retorna dicha sesión y un token de acceso.'
   })
   @ApiBody({type: RegisterBody})
-  register(@Body() bodyRequest: RegisterRequest) {
-    return this._securityService.register(bodyRequest);
+  register(@Body() bodyRequest: RegisterRequest, @Res() res: Response) {
+    return this._securityService.register(bodyRequest)
+      .pipe(
+        catchError(
+          (err: LoginResult): Observable<SgiResponse<LoginResult|Error>> => {
+            let response: SgiResponse;
+            if (err.message === CONFIRMATION_ERROR) {
+              const error = err.errorDetail as Error;
+              response = {
+                statusCode: 400,
+                message: error.message,
+                data: error
+              }
+            } else {
+              response = {
+                statusCode: 500,
+                message: err.message,
+                data: err
+              }
+            }
+            return of(response);
+          }
+        ),
+        map(
+          (response: SgiResponse) => res.status(201).json(response)
+        )
+      );
   }
 
   @Get('logout')

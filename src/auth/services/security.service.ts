@@ -25,8 +25,10 @@ import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { UserProfileService } from 'core/services/user-profile.service';
 import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
 import { UserProfile } from 'models/user-profile.model';
+import { SgiResponse } from 'interfaces/_response.interface';
 
-const LOGIN_ERROR = 'loginfailure';
+export const LOGIN_ERROR = 'loginfailure';
+export const CONFIRMATION_ERROR = 'nomatch';
 
 @Injectable()
 export class SecurityService {
@@ -160,10 +162,18 @@ export class SecurityService {
       );
   }
   
-  register(registerData: RegisterRequest): Observable<RegisterResult> {
+  register(registerData: RegisterRequest): Observable<SgiResponse<RegisterResult>> {
     const password = registerData.password.trim();
     if (password !== registerData.passwordConfirmation.trim()) {
-      return throwError(() => new Error('password confirmation doesn\'t match'))
+      return throwError((): LoginResult => {
+        const noMatchMessage ='password confirmation doesn\'t match';
+        const err = new Error(noMatchMessage);
+        return {
+          success: false,
+          message: CONFIRMATION_ERROR,
+          errorDetail: err,
+        }
+      })
     }
     return this.generatePasswordHash(password)
       .pipe(
@@ -197,7 +207,8 @@ export class SecurityService {
             console.error(error);
             const errorResult: LoginResult = {
               success: false,
-              message: LOGIN_ERROR
+              message: LOGIN_ERROR,
+              errorDetail: error
             };
             return of(errorResult);
           }
@@ -215,7 +226,17 @@ export class SecurityService {
             }
             return registerResult;
           }
-        )
+        ),
+        map(
+          (result: RegisterResult): SgiResponse<RegisterResult> => {
+            const response: SgiResponse = {
+              statusCode: 201,
+              message: 'success',
+              data: result,
+            }
+            return response
+          }
+        ),
       );
   }
 
