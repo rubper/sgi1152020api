@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { LoginRequest } from 'auth/interfaces/_login-request.interface';
 import { LogoutRequest } from 'auth/interfaces/_logout-request.interface';
@@ -15,21 +15,33 @@ export class AuthController {
   ) {}
   
   @Post('login')
-  @ApiBody({type: LoginBody})
+  @ApiBody({
+    type: LoginBody,
+    description: 'Retorna un resultado de inicio de sesión, con una bandera de exito, un mensaje, ' +
+    'y en caso de exito un token de acceso. Aparte del nombre de usuario y contraseña, debe recibir ' +
+    'un tercer paramentro que debe ir vacío para atrapar bots indeseados.'
+  })
   login(@Body() bodyRequest: LoginRequest) {
     return this._securityService.login(bodyRequest.username, bodyRequest.password, '');
   }
 
   @Post('register')
+  @ApiBody({
+    type: LoginBody,
+    description: 'Crea un usuario, inicia sesión con este, y retorna dicha sesión y un token de acceso.'
+  })
   @ApiBody({type: RegisterBody})
   register(@Body() bodyRequest: RegisterRequest) {
     return this._securityService.register(bodyRequest);
   }
 
-  @Post('logout')
+  @Get('logout')
   @ApiBearerAuth()
-  @ApiBody({type: LogoutBody})
-  logout(@Headers() headers, @Body() bodyRequest: LogoutRequest) {
+  @ApiBody({
+    type: LogoutBody,
+    description: 'Invalida el token de acceso desde el lado del servidor, y termina la sesión en la base de datos.'
+  })
+  logout(@Headers() headers) {
     const token = headers['authorization'];
     return this._securityService.logout(token);
   }
