@@ -247,6 +247,23 @@ export class SecurityService {
     return this.revokeToken(userId);
   }
 
+  /**
+   * Returns whether the provided authorization header is still valid or not
+   *
+   * @param authorizationHeader - the auth header with the token
+   * @returns a boolean confirming if the token is valid
+   */
+  verifyToken(authorizationHeader: string): boolean {
+    if (!authorizationHeader) {
+      return false;
+    }
+    const accessToken = authorizationHeader.split('Bearer ')[1].trim();
+    const tokenObject = decode(accessToken) as JwtPayload;
+    const expDate: number = new Date(tokenObject.exp).getTime();
+    const nowDate: number = new Date().getTime() / 1000;
+    return nowDate < expDate;
+  }
+
   revokeToken(userId: UUID): Observable<boolean> {
     return this.hasActiveSession(userId)
     .pipe(

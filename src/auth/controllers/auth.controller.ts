@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiHeader, ApiResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Headers, Post, Res } from '@nestjs/common';
 
 import { catchError, map, Observable, of } from 'rxjs';
@@ -66,11 +66,36 @@ export class AuthController {
 
   @Get('logout')
   @ApiBearerAuth()
-  @ApiBody({
+  @ApiHeader({
+    name: 'authorization',
+    description: 'El token de acceso del usuario que ha iniciado sesion.',
+    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W10sInVzZXJuYW1lIjoidGVzdCIsImlhdCI6MTY1NDIzMDM5NywiZXhwIjoxNjU0ODM1MTk3LCJzdWIiOiIzYjg1NTgxZC02MmFjLTRhMTUtODlkNy1kZjg4ZTcwYjUyZDMifQ._0sq6bpnJIGx28FiaCtqkqlIFOJwu4Rw9-qWwaya2ho'
+  })
+  @ApiResponse({
     description: 'Invalida el token de acceso desde el lado del servidor, y termina la sesión en la base de datos.'
   })
   logout(@Headers() headers) {
     const token = headers['authorization'];
     return this._securityService.logout(token);
+  }
+
+  @Get('validate-token')
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'authorization',
+    description: 'El token de acceso del usuario que ha iniciado sesion.',
+    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W10sInVzZXJuYW1lIjoidGVzdCIsImlhdCI6MTY1NDIzMDM5NywiZXhwIjoxNjU0ODM1MTk3LCJzdWIiOiIzYjg1NTgxZC02MmFjLTRhMTUtODlkNy1kZjg4ZTcwYjUyZDMifQ._0sq6bpnJIGx28FiaCtqkqlIFOJwu4Rw9-qWwaya2ho'
+  })
+  @ApiResponse({
+    description: 'Verifica si el token de autorizacion es valido o no.'
+  })
+  verifyToken(@Headers() headers) {
+    const token = headers['authorization'];
+    console.log(headers);
+    
+    if (!token) {
+      return false;
+    }
+    return this._securityService.verifyToken(token);
   }
 }
