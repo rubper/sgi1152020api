@@ -70,8 +70,12 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
       console.warn(`[ 'AppWarning' ] Running in production mode!`);
     }
     // set up orm config
-    await createOrmConfig(configOutput.parsed);
-    return configOutput.parsed;
+    const result = await createOrmConfig(configOutput.parsed);
+    if (result) {
+      return configOutput.parsed;
+    } else {
+      return;
+    }
   } else {
     console.error(`[ 'AppError' ] Couldn't config environment!`);
     console.error(`[ 'AppError' ] Couldn't create ORM configuration as .env couldn't be loaded!`);
@@ -82,5 +86,3 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
 export function getProductionFlag(): boolean {
   return parseBoolean(process.env.PRODUCTION || 'false');
 }
-
-setupEnvironment(getProductionFlag());

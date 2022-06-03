@@ -8,7 +8,7 @@
    "scripts": {
       "env:prod": "node dist/src/scripts/set-prod-env.script.js",
       "setup:prod": "node dist/src/setup.js",
-      "prebuild": "rimraf dist && npm run env:prod && npm run setup:prod",
+      "prebuild": "rimraf dist && npm run env:prod",
       "build": "nest build",
       "build:clean": "rimraf dist && nest build",
       "build:prod": "npm run build",
