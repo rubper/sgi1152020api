@@ -253,15 +253,32 @@ export class SecurityService {
    * @param authorizationHeader - the auth header with the token
    * @returns a boolean confirming if the token is valid
    */
-  verifyToken(authorizationHeader: string): boolean {
+  async verifyToken(authorizationHeader: string): Promise<boolean> {
     if (!authorizationHeader) {
       return false;
     }
+    // get token data
     const accessToken = authorizationHeader.split('Bearer ')[1].trim();
     const tokenObject = decode(accessToken) as JwtPayload;
+    
+    // Verificacion de app secret en token
+ 
+    // const appid = tokenObject['sgiapp'];    
+    // const compareHash = Secrets.APP_HASH;    
+    // if (!appid || appid !== compareHash) {
+    //   return false;
+    // }
+
+    // get dates
     const expDate: number = new Date(tokenObject.exp).getTime();
     const nowDate: number = new Date().getTime() / 1000;
-    return nowDate < expDate;
+    // compare
+    const isValid = nowDate < expDate;
+    if (!isValid) {
+      const userId = tokenObject.sub;
+      this.revokeToken(userId);
+    }
+    return isValid;
   }
 
   revokeToken(userId: UUID): Observable<boolean> {
@@ -360,6 +377,7 @@ export class SecurityService {
       const tokenData = {
         roles,
         username,
+        sgiapp: Secrets.APP_HASH,
       };
       const tokenConfig: SignOptions = {
         algorithm: 'HS256', 

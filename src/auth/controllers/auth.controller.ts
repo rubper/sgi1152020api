@@ -7,7 +7,7 @@ import { Response } from 'express';
 import { LoginBody } from 'auth/models/login.body-request';
 import { SgiResponse } from 'interfaces/_response.interface';
 import { RegisterBody } from 'auth/models/register.body-request';
-import { CONFIRMATION_ERROR, SecurityService } from 'auth/services/security.service';
+import { CONFIRMATION_ERROR, LOGIN_ERROR, SecurityService } from 'auth/services/security.service';
 import { LoginRequest } from 'auth/interfaces/_login-request.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { LoginResult } from 'auth/interfaces/_login-result.interface';
@@ -25,8 +25,24 @@ export class AuthController {
     'y en caso de exito un token de acceso. Aparte del nombre de usuario y contraseña, debe recibir ' +
     'un tercer paramentro que debe ir vacío para atrapar bots indeseados.'
   })
-  login(@Body() bodyRequest: LoginRequest) {
-    return this._securityService.login(bodyRequest.username, bodyRequest.password, '');
+  login(@Body() bodyRequest: LoginRequest, @Res() res: Response) {
+    return this._securityService
+      .login(bodyRequest.username, bodyRequest.password, '')
+      .pipe(
+        catchError(
+          (err: Error): Observable<SgiResponse<LoginResult|Error>> => {
+            if (err.name === LOGIN_ERROR) {
+              return of({
+                statusCode: 401,
+                message: 'Login failed! Wrong credentials.'
+              })
+            }
+          }
+        ),
+        map(
+          (response: SgiResponse) => res.status(201).json(response)
+        )
+      );
   }
 
   @Post('register')
@@ -65,33 +81,27 @@ export class AuthController {
   }
 
   @Get('logout')
-  @ApiBearerAuth()
-  @ApiHeader({
-    name: 'authorization',
-    description: 'El token de acceso del usuario que ha iniciado sesion.',
-    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W10sInVzZXJuYW1lIjoidGVzdCIsImlhdCI6MTY1NDIzMDM5NywiZXhwIjoxNjU0ODM1MTk3LCJzdWIiOiIzYjg1NTgxZC02MmFjLTRhMTUtODlkNy1kZjg4ZTcwYjUyZDMifQ._0sq6bpnJIGx28FiaCtqkqlIFOJwu4Rw9-qWwaya2ho'
-  })
+  @ApiBearerAuth('JWT')
   @ApiResponse({
     description: 'Invalida el token de acceso desde el lado del servidor, y termina la sesión en la base de datos.'
   })
-  logout(@Headers() headers) {
-    const token = headers['authorization'];
+  logout(@Headers() headers: {authorization: string}) {
+    const token = headers.authorization;
+    
+    if (!token) {
+      return false;
+    }
+
     return this._securityService.logout(token);
   }
 
   @Get('validate-token')
-  @ApiBearerAuth()
-  @ApiHeader({
-    name: 'authorization',
-    description: 'El token de acceso del usuario que ha iniciado sesion.',
-    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W10sInVzZXJuYW1lIjoidGVzdCIsImlhdCI6MTY1NDIzMDM5NywiZXhwIjoxNjU0ODM1MTk3LCJzdWIiOiIzYjg1NTgxZC02MmFjLTRhMTUtODlkNy1kZjg4ZTcwYjUyZDMifQ._0sq6bpnJIGx28FiaCtqkqlIFOJwu4Rw9-qWwaya2ho'
-  })
+  @ApiBearerAuth('JWT')
   @ApiResponse({
     description: 'Verifica si el token de autorizacion es valido o no.'
   })
-  verifyToken(@Headers() headers) {
-    const token = headers['authorization'];
-    console.log(headers);
+  verifyToken(@Headers() headers: {authorization: string}) {
+    const token = headers.authorization;
     
     if (!token) {
       return false;
