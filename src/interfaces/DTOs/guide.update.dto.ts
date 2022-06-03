@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IGuide } from 'interfaces/guide.interface';
 import { UUID } from 'types/uuid.type';
 
-export class UpdateGuideDTO {
+export class UpdateGuideDTO implements Partial<IGuide> {
   @ApiProperty({
     description: 'El usuario asociado al guía.',
     required: true

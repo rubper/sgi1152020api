@@ -1,12 +1,11 @@
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { LoginRequest } from 'auth/interfaces/_login-request.interface';
-import { LogoutRequest } from 'auth/interfaces/_logout-request.interface';
-import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
+import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+
 import { LoginBody } from 'auth/models/login.body-request';
-import { LogoutBody } from 'auth/models/logout.body-request';
 import { RegisterBody } from 'auth/models/register.body-request';
 import { SecurityService } from 'auth/services/security.service';
+import { LoginRequest } from 'auth/interfaces/_login-request.interface';
+import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -38,7 +37,6 @@ export class AuthController {
   @Get('logout')
   @ApiBearerAuth()
   @ApiBody({
-    type: LogoutBody,
     description: 'Invalida el token de acceso desde el lado del servidor, y termina la sesión en la base de datos.'
   })
   logout(@Headers() headers) {

@@ -1,11 +1,14 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { ReportTypes } from "constants/report-types.constant";
-import { ValueTypes } from "constants/value-types.constant";
-import { Moment } from "moment";
-import { Column } from "typeorm";
-import { UUID } from "types/uuid.type";
+import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateReportDTO {
+import { Moment } from 'moment';
+import { Column } from 'typeorm';
+
+import { UUID } from 'types/uuid.type';
+import { IReport } from 'interfaces/report.interface';
+import { ReportTypes } from 'constants/report-types.constant';
+import { ValueTypes } from 'constants/value-types.constant';
+
+export class CreateReportDTO implements Partial<IReport> {
 
   @ApiProperty({
     description: 'Fecha del reporte',

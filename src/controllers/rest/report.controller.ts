@@ -1,13 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Guide } from 'models/guide.model';
+import { Report } from 'models/report.model';
 import { ReportService } from 'core/services/report.service';
 import { CreateReportDTO } from 'interfaces/DTOs/report.create.dto';
 import { UpdateReportDTO } from 'interfaces/DTOs/report.update.dto';
-import { IReport } from 'interfaces/report.interface';
-import { Guide } from 'models/guide.model';
-import { Report } from 'models/report.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 
 @Controller('report')
 export class ReportController {
@@ -15,7 +13,7 @@ export class ReportController {
 
   @Post()
   @ApiBody({type: CreateReportDTO})
-  create(@Body() createReportDto: CreateDTO<IReport>) {
+  create(@Body() createReportDto: CreateReportDTO) {
     return this.reportService.create(createReportDto);
   }
 
@@ -34,7 +32,7 @@ export class ReportController {
   @Patch(':id')
   @ApiBody({type: UpdateReportDTO})
   @ApiResponse({type: Report})
-  update(@Param('id') id: string, @Body() updateReportDto: UpdateDTO<IReport>) {
+  update(@Param('id') id: string, @Body() updateReportDto: UpdateReportDTO) {
     return this.reportService.update(id, updateReportDto);
   }
 

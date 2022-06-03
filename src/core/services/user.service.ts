@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { IUser } from 'auth/interfaces/user.interface';
-import { User } from 'models/user.model';
+
 import { Observable, of, from } from 'rxjs';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
-import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 import { FindConditions, FindOneOptions, FindOperator } from 'typeorm';
+
 import { UUID } from 'types/uuid.type';
+import { User } from 'models/user.model';
+import { CreateUserDTO } from 'interfaces/DTOs/user.create.dto';
+import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
+import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 
 @Injectable()
 export class UserService {
-  create(createDto: CreateDTO<IUser>) {
+  create(createDto: CreateUserDTO) {
     return new User(createDto).save();
   }
 
@@ -40,7 +41,7 @@ export class UserService {
     return user$;
   }
 
-  update(id: string, updateDto: UpdateDTO<IUser>) {
+  update(id: string, updateDto: UpdateUserDTO) {
     return User.findOne(id).then(
       (user: User) => {
         user.mapValueFromBase(updateDto);

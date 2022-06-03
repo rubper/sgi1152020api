@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { compare, genSalt, hash } from 'bcrypt';
 import { decode, JwtPayload, sign, SignOptions } from 'jsonwebtoken';
-import { catchError, combineLatest, from, map,  Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, combineLatest, firstValueFrom, from, map,  Observable, of, switchMap, throwError } from 'rxjs';
 
 import { Role } from 'models/role.model';
 import { User } from 'models/user.model';
@@ -22,7 +22,9 @@ import { DbFilter } from 'types/_db-filter-params.type';
 import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 import { ActiveSessionResult } from 'auth/interfaces/_active-session-result.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
-import { FindOperator } from 'typeorm';
+import { UserProfileService } from 'core/services/user-profile.service';
+import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
+import { UserProfile } from 'models/user-profile.model';
 
 const LOGIN_ERROR = 'loginfailure';
 
@@ -30,6 +32,7 @@ const LOGIN_ERROR = 'loginfailure';
 export class SecurityService {
   constructor(
     private _userService: UserService,
+    private _userProfileService: UserProfileService,
     private _userSessionService: UserSessionService,
   ) {}
 
@@ -177,9 +180,15 @@ export class SecurityService {
         switchMap(
           (savedUser: User) => {
             const result = this.createLoginResult(savedUser, true);
+            const profile$ = this.createUserProfile({
+              firstName: 'DEMO',
+              lastName: 'DEMO',
+              user: savedUser.uuid,
+            });
             return combineLatest([
               this.createUserSession(result.token, savedUser),
-              of(result)
+              of(result),
+              profile$
             ])
           }
         ),
@@ -194,7 +203,7 @@ export class SecurityService {
           }
         ),
         map(
-          ([session, sessionlessResult]: [Session, LoginResult]): RegisterResult => {
+          ([session, sessionlessResult, profile]: [Session, LoginResult, UserProfile]): RegisterResult => {
             let registerResult: RegisterResult;
             if ( !sessionlessResult.success ) {
               registerResult = sessionlessResult; 
@@ -276,6 +285,17 @@ export class SecurityService {
         )
       )
 
+  }
+
+  /**
+   * Connects to the ORM to create a new session in the database
+   *
+   * @param token - the token to store
+   * @param user - the session's user 
+   * @returns an observable that emits a created session
+   */
+   createUserProfile(profileData: CreateUserProfileDTO): Observable<UserProfile> {
+    return from(this._userProfileService.create(profileData));
   }
 
   /**

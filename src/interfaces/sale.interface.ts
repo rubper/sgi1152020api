@@ -1,15 +1,15 @@
+import { UUID } from 'types/uuid.type';
+import { ITour } from './tour.interface';
 import { IResource } from './_resource.interface';
 import { IUser } from 'auth/interfaces/user.interface';
 import { ITimestampable } from './_timestampable.interface';
-import { User } from 'models/user.model';
-import { Tour } from 'models/tour.model';
 
 export interface ISale extends IResource, Partial<ITimestampable> {
   amount: number;
-  seller: IUser;
+  seller: IUser | UUID;
   ownerFirstName: string;
   ownerLastName: string;
-  user?: User;
+  user?: IUser | UUID;
   identityDocument: string;
-  tour: Tour;
+  tour: ITour | UUID;
 }

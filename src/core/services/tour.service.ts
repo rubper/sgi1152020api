@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ITour } from 'interfaces/tour.interface';
+
 import { Tour } from 'models/tour.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { CreateTourDTO } from 'interfaces/DTOs/tour.create.dto';
+import { UpdateTourDTO } from 'interfaces/DTOs/tour.update.dto';
 
 @Injectable()
 export class TourService {
-  create(createDto: CreateDTO<ITour>) {
+  create(createDto: CreateTourDTO) {
     return new Tour(createDto).save();
   }
 
@@ -18,7 +18,7 @@ export class TourService {
     return Tour.findOne(id);
   }
 
-  update(id: string, updateDto: UpdateDTO<ITour>) {
+  update(id: string, updateDto: UpdateTourDTO) {
     return Tour.findOne(id).then(
       (tour: Tour) => {
         tour.mapValueFromBase(updateDto);

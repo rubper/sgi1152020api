@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Sale } from 'models/sale.model';
 import { SaleService } from 'core/services/sale.service';
 import { CreateSaleDTO } from 'interfaces/DTOs/sale.create.dto';
 import { UpdateSaleDTO } from 'interfaces/DTOs/sale.update.dto';
-import { ISale } from 'interfaces/sale.interface';
-import { Sale } from 'models/sale.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 
 @Controller('sale')
 export class SaleController {
@@ -14,7 +12,7 @@ export class SaleController {
 
   @Post()
   @ApiBody({type: CreateSaleDTO})
-  create(@Body() createSaleDto: CreateDTO<ISale>) {
+  create(@Body() createSaleDto: CreateSaleDTO) {
     return this.saleService.create(createSaleDto);
   }
 
@@ -33,7 +31,7 @@ export class SaleController {
   @Patch(':id')
   @ApiBody({type: UpdateSaleDTO})
   @ApiResponse({type: Sale})
-  update(@Param('id') id: string, @Body() updateSaleDto: UpdateDTO<ISale>) {
+  update(@Param('id') id: string, @Body() updateSaleDto: UpdateSaleDTO) {
     return this.saleService.update(id, updateSaleDto);
   }
 

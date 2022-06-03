@@ -5,13 +5,13 @@ import { IUser } from 'auth/interfaces/user.interface';
 
 import { Moment } from 'moment';
 import { ITour } from './tour.interface';
+import { UUID } from 'types/uuid.type';
 
 export interface IGuide extends IResource, ITimestampable {
-  user: IUser;
+  user: IUser | UUID;
   fixedHours: number;
   hoursAggregate: number;
-  volunteershipStart: Moment;
-  volunteershipEnd?: Moment;
-
-  toursHistory?: ITour[];
+  volunteershipStart: Moment | string;
+  volunteershipEnd?: Moment | string;
+  toursHistory?: (ITour | UUID)[];
 }

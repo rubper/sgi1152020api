@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ISale } from 'interfaces/sale.interface';
+
 import { Sale } from 'models/sale.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { CreateSaleDTO } from 'interfaces/DTOs/sale.create.dto';
+import { UpdateSaleDTO } from 'interfaces/DTOs/sale.update.dto';
 
 @Injectable()
 export class SaleService {
-  create(createDto: CreateDTO<ISale>) {
+  create(createDto: CreateSaleDTO) {
     return new Sale(createDto).save();
   }
 
@@ -18,7 +18,7 @@ export class SaleService {
     return Sale.findOne(id);
   }
 
-  update(id: string, updateDto: UpdateDTO<ISale>) {
+  update(id: string, updateDto: UpdateSaleDTO) {
     return Sale.findOne(id).then(
       (sale: Sale) => {
         sale.mapValueFromBase(updateDto);

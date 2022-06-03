@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { IRole } from 'auth/interfaces/role.interface';
+
 import { Role } from 'models/role.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { CreateRoleDTO } from 'interfaces/DTOs/role.create.dto';
+import { UpdateRoleDTO } from 'interfaces/DTOs/role.update.dto';
 
 @Injectable()
 export class RoleService {
-  create(createDto: CreateDTO<IRole>) {
+  create(createDto: CreateRoleDTO) {
     return new Role(createDto).save();
   }
 
@@ -18,7 +18,7 @@ export class RoleService {
     return Role.findOne(id);
   }
 
-  update(id: string, updateDto: UpdateDTO<IRole>) {
+  update(id: string, updateDto: UpdateRoleDTO) {
     return Role.findOne(id).then(
       (role: Role) => {
         role.mapValueFromBase(updateDto);

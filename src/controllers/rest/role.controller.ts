@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { RoleService } from 'core/services/role.service';
-import { IRole } from 'auth/interfaces/role.interface';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Role } from 'models/role.model';
+import { RoleService } from 'core/services/role.service';
 import { CreateRoleDTO } from 'interfaces/DTOs/role.create.dto';
 import { UpdateRoleDTO } from 'interfaces/DTOs/role.update.dto';
-import { Role } from 'models/role.model';
 
 @Controller('role')
 export class RoleController {
@@ -14,7 +12,7 @@ export class RoleController {
 
   @Post()
   @ApiBody({type: CreateRoleDTO})
-  create(@Body() createRoleDto: CreateDTO<IRole>) {
+  create(@Body() createRoleDto: CreateRoleDTO) {
     return this.roleService.create(createRoleDto);
   }
 
@@ -33,7 +31,7 @@ export class RoleController {
   @Patch(':id')
   @ApiBody({type: UpdateRoleDTO})
   @ApiResponse({type: Role})
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateDTO<IRole>) {
+  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDTO) {
     return this.roleService.update(id, updateRoleDto);
   }
 

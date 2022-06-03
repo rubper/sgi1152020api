@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TourTypes } from 'constants/tour-types.constant';
-import { UUID } from 'types/uuid.type';
 
-export class CreateTourDTO {  
+import { UUID } from 'types/uuid.type';
+import { ITour } from 'interfaces/tour.interface';
+import { TourTypes } from 'constants/tour-types.constant';
+
+export class CreateTourDTO implements Partial<ITour> {  
 
   @ApiProperty({
     description: 'Fecha en que se realizara la visita.',

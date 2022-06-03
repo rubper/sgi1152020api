@@ -1,14 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UserService } from 'core/services/user.service';
-import { IUser } from 'auth/interfaces/user.interface';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
-import { SecurityService } from 'auth/services/security.service';
-import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Guide } from 'models/guide.model';
+import { UserService } from 'core/services/user.service';
+import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
+import { SecurityService } from 'auth/services/security.service';
 import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
 import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
-import { Guide } from 'models/guide.model';
+import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 
 @Controller('user')
 export class UserController {
@@ -38,7 +37,7 @@ export class UserController {
   @Patch(':id')
   @ApiBody({type: UpdateGuideDTO})
   @ApiResponse({type: Guide})
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateDTO<IUser>) {
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
     return this.userService.update(id, updateUserDto);
   }
 

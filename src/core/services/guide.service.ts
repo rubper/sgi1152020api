@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { IGuide } from 'interfaces/guide.interface';
+
 import { Guide } from 'models/guide.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
+import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
 
 @Injectable()
 export class GuideService {
-  create(createDto: CreateDTO<IGuide>) {
+  create(createDto: CreateGuideDTO) {
     return new Guide(createDto).save();
   }
 
@@ -18,7 +18,7 @@ export class GuideService {
     return Guide.findOne(id);
   }
 
-  update(id: string, updateDto: UpdateDTO<IGuide>) {
+  update(id: string, updateDto: UpdateGuideDTO) {
     return Guide.findOne(id).then(
       (guide: Guide) => {
         guide.mapValueFromBase(updateDto);

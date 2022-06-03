@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { UserProfile } from 'models/user-profile.model';
 import { UserProfileService } from 'core/services/user-profile.service';
 import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
 import { UpdateUserProfileDTO } from 'interfaces/DTOs/user-profile.update.dto';
-import { IUserProfile } from 'interfaces/user-profile.interface';
-import { UserProfile } from 'models/user-profile.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
 
 @Controller('user-profile')
 export class UserProfileController {
@@ -14,7 +12,7 @@ export class UserProfileController {
 
   @Post()
   @ApiBody({type: CreateUserProfileDTO})
-  create(@Body() createUserProfileDto: CreateDTO<IUserProfile>) {
+  create(@Body() createUserProfileDto: CreateUserProfileDTO) {
     return this.userProfileService.create(createUserProfileDto);
   }
 
@@ -33,7 +31,7 @@ export class UserProfileController {
   @Patch(':id')
   @ApiBody({type: UpdateUserProfileDTO})
   @ApiResponse({type: UserProfile})
-  update(@Param('id') id: string, @Body() updateUserProfileDto: UpdateDTO<IUserProfile>) {
+  update(@Param('id') id: string, @Body() updateUserProfileDto: CreateUserProfileDTO) {
     return this.userProfileService.update(id, updateUserProfileDto);
   }
 

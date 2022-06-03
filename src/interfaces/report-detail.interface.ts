@@ -1,3 +1,5 @@
+import { UUID } from 'types/uuid.type';
+import { IReport } from './report.interface';
 import { IResource } from './_resource.interface';
 
 export interface IReportDetail extends IResource {
@@ -7,4 +9,5 @@ export interface IReportDetail extends IResource {
   xx?: string;
   yy?: string;
   zz?: string;
+  report: IReport | UUID;
 }

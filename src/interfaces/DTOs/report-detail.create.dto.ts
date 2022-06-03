@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IReportDetail } from "interfaces/report-detail.interface";
 import { Report } from "models/report.model";
 
-export class CreateReportDetailDTO {
+export class CreateReportDetailDTO implements Partial<IReportDetail> {
   @ApiProperty({
     description: 'Valor o valores en x de la tupla del reporte',
     required: true

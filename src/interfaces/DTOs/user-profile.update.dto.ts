@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UUID } from 'types/uuid.type';
 
-export class UpdateUserProfileDTO {  
+import { UUID } from 'types/uuid.type';
+import { IUserProfile } from 'interfaces/user-profile.interface';
+
+export class UpdateUserProfileDTO implements Partial<IUserProfile> {  
   @ApiProperty({
     description: 'Primer nombre del usuario',
     required: false

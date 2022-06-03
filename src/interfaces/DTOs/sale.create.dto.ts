@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UUID } from 'types/uuid.type';
 
-export class CreateSaleDTO {  
+import { UUID } from 'types/uuid.type';
+import { ISale } from 'interfaces/sale.interface';
+
+export class CreateSaleDTO implements Partial<ISale> {  
   @ApiProperty({
     description: 'Cantidad total por la que se realizo la venta.',
     required: true

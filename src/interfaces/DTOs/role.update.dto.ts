@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateRoleDTO {
+import { IRole } from 'auth/interfaces/role.interface';
+
+export class UpdateRoleDTO implements Partial<IRole> {
   @ApiProperty({
     description: 'Nombre unico del rol, no debe contener espacios.',
     required: false,

@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { TourService } from 'core/services/tour.service';
-import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
-import { CreateTourDTO } from 'interfaces/DTOs/tour.create.dto';
-import { ITour } from 'interfaces/tour.interface';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
 import { Guide } from 'models/guide.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { TourService } from 'core/services/tour.service';
+import { CreateTourDTO } from 'interfaces/DTOs/tour.create.dto';
+import { UpdateTourDTO } from 'interfaces/DTOs/tour.update.dto';
 
 @Controller('tour')
 export class TourController {
@@ -14,7 +12,7 @@ export class TourController {
 
   @Post()
   @ApiBody({type: CreateTourDTO})
-  create(@Body() createTourDto: CreateDTO<ITour>) {
+  create(@Body() createTourDto: CreateTourDTO) {
     return this.tourService.create(createTourDto);
   }
 
@@ -31,9 +29,9 @@ export class TourController {
   }
 
   @Patch(':id')
-  @ApiBody({type: UpdateGuideDTO})
+  @ApiBody({type: UpdateTourDTO})
   @ApiResponse({type: Guide})
-  update(@Param('id') id: string, @Body() updateTourDto: UpdateDTO<ITour>) {
+  update(@Param('id') id: string, @Body() updateTourDto: UpdateTourDTO) {
     return this.tourService.update(id, updateTourDto);
   }
 

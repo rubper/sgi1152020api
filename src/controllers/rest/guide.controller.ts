@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { GuideService } from 'core/services/guide.service';
-import { IGuide } from 'interfaces/guide.interface';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
 import { Guide } from 'models/guide.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { GuideService } from 'core/services/guide.service';
 import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
 import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
 
@@ -14,7 +12,7 @@ export class GuideController {
 
   @Post()
   @ApiBody({type: CreateGuideDTO})
-  create(@Body() createGuideDto: CreateDTO<Guide>) {
+  create(@Body() createGuideDto: CreateGuideDTO) {
     return this.guideService.create(createGuideDto);
   }
 
@@ -33,7 +31,7 @@ export class GuideController {
   @Patch(':id')
   @ApiBody({type: UpdateGuideDTO})
   @ApiResponse({type: Guide})
-  update(@Param('id') id: string, @Body() updateGuideDto: UpdateDTO<IGuide>) {
+  update(@Param('id') id: string, @Body() updateGuideDto: UpdateGuideDTO) {
     return this.guideService.update(id, updateGuideDto);
   }
 

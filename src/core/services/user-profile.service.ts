@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { IUserProfile } from 'interfaces/user-profile.interface';
+
 import { UserProfile } from 'models/user-profile.model';
-import { CreateDTO } from 'shared/helpers/base/create-dto.type';
-import { UpdateDTO } from 'shared/helpers/base/update-dto.type';
+import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
+import { UpdateUserProfileDTO } from 'interfaces/DTOs/user-profile.update.dto';
 
 @Injectable()
 export class UserProfileService {
-  create(createDto: CreateDTO<IUserProfile>) {
+  create(createDto: CreateUserProfileDTO) {
     return new UserProfile(createDto).save();
   }
 
@@ -18,7 +18,7 @@ export class UserProfileService {
     return UserProfile.findOne(id);
   }
 
-  update(id: string, updateDto: UpdateDTO<IUserProfile>) {
+  update(id: string, updateDto: UpdateUserProfileDTO) {
     return UserProfile.findOne(id).then(
       (userProfile: UserProfile) => {
         userProfile.mapValueFromBase(updateDto);
