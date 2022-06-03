@@ -17,7 +17,7 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
   uuid: UUID;
   
   @ApiProperty({
-    description: 'Cantidad total por la que se realizo la venta.',
+    description: 'Cantidad de tickets por la que se realizo la venta.',
     required: true
   })
   @Column('decimal')
@@ -77,7 +77,8 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
 
   @ApiProperty({
     description: 'Visita asignada a los ticket de esta venta.',
-    required: true
+    required: true,
+    type: () => User
   })
   @ManyToOne(() => Tour, tour => tour.salesHistory)
   tour: Tour;

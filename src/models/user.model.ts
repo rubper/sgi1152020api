@@ -73,7 +73,8 @@ export class User extends BuildableEntity<IUser> implements IUser {
   // relationships
   @ApiProperty({
     description: 'Guia asociado si existe',
-    required: false
+    required: false,
+    type: () => Guide
   })
   @OneToOne(() => Guide, guide => guide.user, {nullable: true})
   guide?: Guide;

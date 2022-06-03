@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { getProductionFlag, setupEnvironment } from 'setup';
+import { getProductionFlag } from 'setup';
 import { CustomLogger } from 'loggers/custom.logger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { APP_TITLE, APP_DESCRIPTION, APP_VERSION } from 'constants/system.constant';

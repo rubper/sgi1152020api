@@ -58,6 +58,7 @@ export class Report extends BuildableEntity<IReport> implements IReport {
   @ApiProperty({
     description: 'Autor del reporte',
     required: true,
+    type: () => User
   })
   @ManyToOne(type => User, user => user.reports)
   author: User;

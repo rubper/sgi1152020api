@@ -1,9 +1,11 @@
 import { config } from 'dotenv';
 import { writeFile } from 'fs/promises';
+import { parseBoolean } from 'shared/helpers/functions/parse-boolean.function';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
+
 export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): string | NodeJS.ArrayBufferView {
-  const isProd = evaluateLiteralFlag(envConfig.PRODUCTION || 'false');
+  const isProd = parseBoolean(envConfig.PRODUCTION || 'false');
   const sslConfig = isProd ? {
     ssl: {
       rejectUnauthorized: false
@@ -12,8 +14,8 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
   const ormConfigObject: PostgresConnectionOptions = {
     type: 'postgres',
     url: envConfig.DATABASE_URL,
-    synchronize: evaluateLiteralFlag(envConfig.PG_SYNCDB),
-    logging: evaluateLiteralFlag(envConfig.LOGGING),
+    synchronize: parseBoolean(envConfig.PG_SYNCDB),
+    logging: parseBoolean(envConfig.LOGGING),
     ssl: isProd ? true : false,
     schema: 'public',
     entities: [
@@ -32,8 +34,6 @@ export function buildDatabaseEnvironmentJSON(envConfig: Record<string,string>): 
     },
     extra: sslConfig
   }
-  console.log('ormConfigObject');
-  console.log(ormConfigObject);
   return JSON.stringify(ormConfigObject);
 }
 
@@ -57,7 +57,7 @@ export async function createOrmConfig(envConfig: Record<string,string>): Promise
 export async function setupEnvironment(isProd: boolean): Promise< Record<string,string> | undefined > { 
   // config dotenv
   const configOutput = config({
-    path: isProd ? 'prod.env' : 'dev.env'
+    path: isProd ? '.env' : 'dev.env'
   });
 
   // handle output
@@ -69,9 +69,6 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
       // warn production mode
       console.warn(`[ 'AppWarning' ] Running in production mode!`);
     }
-  
-    console.log('parsed config');
-    console.log(configOutput.parsed);
     // set up orm config
     await createOrmConfig(configOutput.parsed);
     return configOutput.parsed;
@@ -83,31 +80,7 @@ export async function setupEnvironment(isProd: boolean): Promise< Record<string,
 }
 
 export function getProductionFlag(): boolean {
-  return evaluateLiteralFlag(process.env.PRODUCTION || 'false');
-}
-
-export function evaluateLiteralFlag(flag: string) {
-  const trimmedVar = flag.trim();
-  let boolResult: boolean | undefined;
-  if (typeof trimmedVar === 'string') {
-    const trueMatches = trimmedVar?.match(/^(true|yes|t|y|1)$/i);
-    const isTrue: boolean = trueMatches && trueMatches.length > 0;
-    const falseMatches = trimmedVar?.match(/^(false|no|f|n|0)$/i);
-    const isFalse: boolean = falseMatches && falseMatches.length > 0;
-    if (!isTrue && !isFalse) {
-      boolResult = undefined;
-    } else {
-      boolResult = isTrue ? true : false;
-    }
-  } else {
-    if (trimmedVar === (0 | 1)) {
-      boolResult = 1 ? true : false;
-
-    } else {
-      boolResult = undefined;
-    }
-  }
-  return boolResult;
+  return parseBoolean(process.env.PRODUCTION || 'false');
 }
 
 setupEnvironment(getProductionFlag());

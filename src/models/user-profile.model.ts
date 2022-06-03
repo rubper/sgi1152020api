@@ -55,9 +55,10 @@ export class UserProfile extends BuildableEntity<IUserProfile> implements IUserP
   // relationships
   @ApiProperty({
     description: 'Usuario asignado a este perfil',
-    required: false
+    required: false,
+    type: () => User
   })
-  @OneToOne(type => User, user => user.profile)
+  @OneToOne(() => User, user => user.profile)
   user: User;
 
   get additionalPhones(): string[] {
