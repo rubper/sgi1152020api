@@ -32,6 +32,8 @@ export class AuthController {
       .pipe(
         catchError(
           (loginError): Observable<LoginResult> => {
+            console.log(loginError);
+            
             const result: LoginResult = {
               success: false,
               message: 'error while trying to login',

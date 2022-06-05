@@ -29,11 +29,13 @@ import { SgiResponse } from 'interfaces/_response.interface';
 import { AuthErrorFactory, AuthErrors } from 'auth/helpers/auth.errors';
 import { IUser } from 'auth/interfaces/user.interface';
 import { IUserProfile } from 'interfaces/user-profile.interface';
+import { RoleService } from 'core/services/role.service';
 
 @Injectable()
 export class SecurityService {
   constructor(
     private _userService: UserService,
+    private _roleService: RoleService,
     private _userProfileService: UserProfileService,
     private _userSessionService: UserSessionService,
   ) {}
@@ -149,14 +151,22 @@ export class SecurityService {
             }
             const result = this.createLoginResult(user);
             return combineLatest([ 
+              from(result),
+              of(user),
+            ]);
+          }
+        ),
+        switchMap(
+          ([result, user]: [LoginResult, User]) => {
+            return combineLatest([
               of(result),
-              this.createUserSession(result.token, user)
+              this.createUserSession(result.token, user),
             ]);
           }
         ),
         map(
-          ([sessionlessResult, session]: [LoginResult, Session]): LoginResult => {
-            const result = sessionlessResult;
+          ([loginResult, session]: [LoginResult, Session]): LoginResult => {
+            const result = loginResult;
             result.session = session;
             return result;
           }
@@ -218,48 +228,49 @@ export class SecurityService {
           }
         ),
         switchMap(
-          // step 2: create related session and profile
+          // step 2: create related profile
           (savedUser: User) => {
-            const sessionlessLoginResult = this.createLoginResult(savedUser);
+            const loginResult$ = from(this.createLoginResult(savedUser));
             const userProfile$ = this.createUserProfile({
               firstName: 'DEMO',
               lastName: 'DEMO',
               user: savedUser.uuid,
               identityDocument: '00000000-0',
             });
-            const userSession$ = this.createUserSession(sessionlessLoginResult.token, savedUser);
             return combineLatest([
-              of(sessionlessLoginResult),
-              userSession$,
-              userProfile$
+              loginResult$,
+              userProfile$,
+              of(savedUser),
             ])
           }
         ),
         switchMap(
-          // step 3: save created profile in user
-          ([sessionlessResult, session, profile]: [LoginResult, Session, UserProfile]) => {
-            const user = User.create(session.user);
-            user.profile = profile;
-            const saveResult$ = from(user.save());
+          // step 3: create session
+          ([result, profile, user]: [LoginResult, UserProfile, User]) => {
+            const userSession$ = this.createUserSession(result.token, user);
+            let registerResult: RegisterResult;
+            if ( !result.success ) {
+              registerResult = result; 
+            } else {
+              registerResult = {
+                ...result,
+                createdUser: user,
+              };
+            }
             return combineLatest([
-              of(sessionlessResult),
-              saveResult$
-            ])
+              userSession$,
+              of(registerResult),
+              of(profile),
+            ]);
           }
         ),
         map(
-          // put them together
-          ([sessionlessResult, userResult]: [LoginResult, User]): RegisterResult => {
-            let registerResult: RegisterResult;
-            if ( !sessionlessResult.success ) {
-              registerResult = sessionlessResult; 
-            } else {
-              registerResult = {
-                ...sessionlessResult,
-                createdUser: userResult,
-              };
-            }
-            return registerResult;
+          // step 4: save created profile in user
+          ([session, registerResult, profile]: [Session, RegisterResult, UserProfile]) => {
+            const user = User.create(session.user);
+            user.profile = profile;
+            user.save();
+            return registerResult
           }
         ),
       );
@@ -304,6 +315,11 @@ export class SecurityService {
       this.revokeToken(userId);
     }
     return isValid;
+  }
+
+  getUserIdFromToken(token: string) {
+    const tokenObject = decode(token) as JwtPayload;
+    return tokenObject.sub;
   }
 
   revokeToken(userId: UUID): Observable<boolean> {
@@ -385,11 +401,11 @@ export class SecurityService {
    * @param success - whether the login was a success or not
    * @returns a login result object
    */
-  createLoginResult(user: User): LoginResult {
+  async createLoginResult(user: User): Promise<LoginResult> {
     const username = user.username;
     // get roles string array
-    const userRoles = user.roles;
-    const roles = userRoles ? user.roles.map((role: Role) => ({
+    const userRoles = await this._roleService.getUserRoles(user.uuid);
+    const roles = userRoles ? userRoles.map((role: Role) => ({
       id: role.uuid, 
       name: role.name
     })) : [];

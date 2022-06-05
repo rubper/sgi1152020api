@@ -1,12 +1,17 @@
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 
 import { Sale } from 'models/sale.model';
 import { SaleService } from 'core/services/sale.service';
 import { CreateSaleDTO } from 'interfaces/DTOs/sale.create.dto';
 import { UpdateSaleDTO } from 'interfaces/DTOs/sale.update.dto';
+import { SetRoles } from 'auth/helpers/auth.decorators';
+import { AuthGuard } from 'auth/helpers/auth.guard';
+import { RolesGuard } from 'auth/helpers/roles.guard';
 
 @Controller('sale')
+@SetRoles()
+@UseGuards(RolesGuard)
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 

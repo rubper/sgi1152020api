@@ -8,6 +8,8 @@ import { User } from 'models/user.model';
 import { CreateUserDTO } from 'interfaces/DTOs/user.create.dto';
 import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
 import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
+import { UserProfile } from 'models/user-profile.model';
+import { Role } from 'models/role.model';
 
 @Injectable()
 export class UserService {
@@ -45,9 +47,17 @@ export class UserService {
 
   update(id: string, updateDto: UpdateUserDTO) {
     return User.findOne(id).then(
-      (user: User) => {
-        user.mapValueFromBase(updateDto);
-        user.save();
+      async (user: User) => {
+        if (updateDto.username) {
+          user['username'] = updateDto.username;
+        } 
+        if (updateDto.profile) {
+          user['profile'] = await UserProfile.findOne(updateDto.profile);
+        } 
+        if (updateDto.roles) {
+          user['roles'] = await Role.findByIds(updateDto.roles);
+        }
+        return user.save();
       }
     );
   }

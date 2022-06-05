@@ -1,5 +1,5 @@
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
 import { catchError, map, Observable, of } from 'rxjs';
@@ -14,11 +14,14 @@ import { User } from 'models/user.model';
 import { RegisterBody } from 'auth/models/register.body-request';
 import { LoginResult } from 'auth/interfaces/_login-result.interface';
 import { RegisterResult } from 'auth/interfaces/_register-result.interface';
+import { AuthGuard } from 'auth/helpers/auth.guard';
+import { RolesGuard } from 'auth/helpers/roles.guard';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 
 
 @Controller('user')
-@SetRoles('admin')
+@SetRoles()
+@UseGuards(RolesGuard)
 export class UserController {
   constructor(
     private readonly _userService: UserService,

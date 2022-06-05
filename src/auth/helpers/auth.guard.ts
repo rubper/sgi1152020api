@@ -1,6 +1,7 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, HttpException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { SecurityService } from '../services/security.service';
+import { AuthErrors } from './auth.errors';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -11,6 +12,18 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    return this._securityService.verifyToken(request.headerField);
+    const headerField = request.headerField;
+    console.log(headerField);
+    
+    return this._securityService
+      .verifyToken(headerField)
+      .then(
+        (isValid: boolean) => {
+          if (!isValid) {
+            throw new HttpException(AuthErrors.AUTHREQUIRED_ERROR, 401);
+          }
+          return isValid;
+        }
+      );
   }
 }

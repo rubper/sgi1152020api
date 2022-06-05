@@ -8,6 +8,7 @@ import { Role } from 'models/role.model';
 import { CreateRoleDTO } from 'interfaces/DTOs/role.create.dto';
 import { UpdateRoleDTO } from 'interfaces/DTOs/role.update.dto';
 import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
+import { User } from 'models/user.model';
 
 @Injectable()
 export class RoleService {
@@ -64,6 +65,14 @@ export class RoleService {
 
   findOne(id: string) {
     return Role.findOne(id);
+  }
+
+  async getUserRoles(userId: UUID) {
+    const user = await User.findOne({
+      relations: ['roles'],
+      where: {'uuid': userId}
+    });
+    return user?.roles ? user.roles : [];
   }
 
 }

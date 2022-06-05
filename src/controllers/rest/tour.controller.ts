@@ -1,12 +1,17 @@
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 
 import { Guide } from 'models/guide.model';
 import { TourService } from 'core/services/tour.service';
 import { CreateTourDTO } from 'interfaces/DTOs/tour.create.dto';
 import { UpdateTourDTO } from 'interfaces/DTOs/tour.update.dto';
+import { SetRoles } from 'auth/helpers/auth.decorators';
+import { AuthGuard } from 'auth/helpers/auth.guard';
+import { RolesGuard } from 'auth/helpers/roles.guard';
 
 @Controller('tour')
+@SetRoles()
+@UseGuards(RolesGuard)
 export class TourController {
   constructor(private readonly tourService: TourService) {}
 

@@ -3,7 +3,7 @@ import { UUID } from 'types/uuid.type';
 import { UserProfile } from './user-profile.model';
 import { IUser } from 'auth/interfaces/user.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToMany, Unique, JoinColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
 import { Guide } from './guide.model';
 import { Report } from './report.model';
 import { Sale } from './sale.model';
@@ -40,6 +40,7 @@ export class User extends BuildableEntity<IUser> implements IUser {
     required: false
   })
   @ManyToMany(() => Role, role => role.users)
+  @JoinTable()
   roles?: Role[];
 
   @ApiProperty({

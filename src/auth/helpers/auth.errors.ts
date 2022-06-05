@@ -4,6 +4,7 @@ export enum AuthErrors {
   NOTFOUND_ERROR = 'usernotfound',
   REGISTER_ERROR = 'registerfailure',
   CONFIRMATION_ERROR = 'passwordnomatch', 
+  AUTHREQUIRED_ERROR = 'notauthenticated',
 } 
 
 export type AuthErrorFactory = { (): Error; (): Error; };

@@ -3,7 +3,7 @@ import { UUID } from 'types/uuid.type';
 
 import { IRole } from 'auth/interfaces/role.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
-import { Entity, Column, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
@@ -35,6 +35,7 @@ export class Role extends BuildableEntity<IRole> implements IRole {
     description: 'Usuarios que poseen este rol',
     required: false,
   })
-  @ManyToMany(type => User, user => user.roles, {nullable: true})
+  @ManyToMany(type => User, user => user.roles, {nullable: true}) 
+  @JoinTable()
   users?: User[];
 }
