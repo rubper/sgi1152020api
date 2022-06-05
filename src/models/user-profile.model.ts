@@ -56,7 +56,7 @@ export class UserProfile extends BuildableEntity<IUserProfile> implements IUserP
     description: 'Numero unico de identidad DUI del titular.',
     default: '00000000-0'
   })
-  @Column({length: 10})
+  @Column({nullable: true, length: 10})
   identityDocument: string;
 
   // relationships

@@ -4,8 +4,8 @@ export const FALSE_REGEX = /^(false|no|f|n|0)$/i;
 export function parseBoolean(value: string) {
   let boolResult: boolean | undefined;
   const matches = _trueOrFalse(value);
-  const isTrue: boolean = matches.true && matches.true.length > 0;
-  const isFalse: boolean = matches.false && matches.false.length > 0;
+  const isTrue: boolean = matches && matches.true && matches.true.length > 0;
+  const isFalse: boolean = matches && matches.false && matches.false.length > 0;
   if (!isTrue && !isFalse) {
     boolResult = undefined;
   } else {
@@ -15,7 +15,7 @@ export function parseBoolean(value: string) {
 }
 
 function _trueOrFalse(value: string) {
-  const trimmedValue = value.trim();
+  const trimmedValue = value?.trim();
   if (!trimmedValue) {
     return;
   }

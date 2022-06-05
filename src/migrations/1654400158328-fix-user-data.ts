@@ -1,10 +1,10 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class fixUniquenessAndForeignKeys1654389471492 implements MigrationInterface {
-    name = 'fixUniquenessAndForeignKeys1654389471492'
+export class fixUserData1654400158328 implements MigrationInterface {
+    name = 'fixUserData1654400158328'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "user_profile" ADD "identityDocument" character varying(10) NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "user_profile" ADD "identityDocument" character varying(10)`);
         await queryRunner.query(`ALTER TABLE "user_profile" ADD "userUuid" uuid`);
         await queryRunner.query(`ALTER TABLE "user_profile" ADD CONSTRAINT "UQ_599d0f5f9b6c7ea7ece2906e41a" UNIQUE ("userUuid")`);
         await queryRunner.query(`ALTER TABLE "report" ADD "dataType" character varying(21) NOT NULL`);
