@@ -3,12 +3,12 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { getProductionFlag } from 'setup';
 import { CustomLogger } from 'loggers/custom.logger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { APP_TITLE, APP_DESCRIPTION, APP_VERSION } from 'constants/system.constant';
 import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import { loadSecrets } from 'constants/secrets.constant';
+import { getProductionFlag } from 'scripts/set-env-file.script';
 export let PRODUCTION: boolean;
 // environment variable object
 export let ENV: Record<string,string>;

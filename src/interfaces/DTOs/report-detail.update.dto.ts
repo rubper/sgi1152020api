@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Report } from 'models/report.model';
 import { IReportDetail } from 'interfaces/report-detail.interface';
+import { UUID } from 'types/uuid.type';
 
 export class UpdateReportDetailDTO implements Partial<IReportDetail> {
   @ApiProperty({
@@ -34,8 +35,8 @@ export class UpdateReportDetailDTO implements Partial<IReportDetail> {
   })
   zz?: string;
   @ApiProperty({
-    description: 'Reporte al que pertenece el registro',
+    description: 'El UUID del reporte al que pertenece el registro',
     required: false
   })
-  report?: Report;
+  report?: UUID;
 }

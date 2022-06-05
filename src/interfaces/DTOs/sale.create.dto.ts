@@ -23,26 +23,20 @@ export class CreateSaleDTO implements Partial<ISale> {
   ownerLastName: string;
 
   @ApiProperty({
-    description: 'Numero unico de identidad DUI del titular.',
-    required: true
-  })
-  identityDocument: string;
-
-  @ApiProperty({
-    description: 'Visita asignada a los ticket de esta venta.',
+    description: 'El UUID de la visita asignada a los ticket de esta venta.',
     required: true
   })
   tour: UUID;
   
   // relationships
   @ApiProperty({
-    description: 'El vendedor asociado a esta compra.',
+    description: 'El UUID del vendedor asociado a esta compra.',
     required: true
   })
   seller: UUID;
 
   @ApiProperty({
-    description: 'Usuario del titular si existe.',
+    description: 'El UUID del usuario del titular si existe.',
     required: false
   })
   user?: UUID;

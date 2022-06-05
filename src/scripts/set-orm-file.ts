@@ -1,5 +1,4 @@
 import { DevEnvironment } from 'constants/dev-environment.constant';
-import { config, DotenvParseOutput } from 'dotenv';
 import { writeFile } from 'fs/promises';
 import { parseBoolean } from 'shared/helpers/functions/parse-boolean.function';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
@@ -45,6 +44,7 @@ export function buildDatabaseEnvironmentJSON(): string {
 }
 
 /**
+ * Main setup environment process
  * Writes to the file system, the ormconfig generated with the buildDatabaseEnvironmentJSON function
  * 
  * @returns A promise that resolves a boolean confirming the success or fail of the operation
@@ -66,49 +66,4 @@ export async function writeOrmConfig(): Promise<boolean> {
   }
 }
 
-/**
- * Main setup environment process
- *
- * @param {boolean} isProd - Whether the running context is production or not
- * @returns A promise that resolves to the parsed environment variables object
- */
-export async function setupEnvironment(isProd: boolean): Promise<DotenvParseOutput> { 
-  // config dotenv
-  const configOutput = config({
-    path: isProd ? '.env' : 'dev.env'
-  });
-
-  // handle output
-  if (!configOutput.error) {
-    // success
-    console.info(`[ 'AppInfo' ] DotEnv configurated`);
-
-    if (isProd) {
-      // warn production mode
-      console.warn(`[ 'AppWarning' ] Running in production mode!`);
-    }
-    // set up orm config
-    const result = await writeOrmConfig();
-    if (result) {
-      return configOutput.parsed;
-    } else {
-      return;
-    }
-  } else {
-    console.error(`[ 'AppError' ] Couldn't config environment!`);
-    console.error(`[ 'AppError' ] Couldn't create ORM configuration as .env couldn't be loaded!`);
-    console.error(`[ 'AppError' ] dotenv Error details:`, configOutput.error);
-  }
-}
-
-/**
- * Reads the PRODUCTION environmental variable, and returns it's value as boolean.
- * Default: false
- * 
- * @returns The value of the environmental variable.
- */
-export function getProductionFlag(): boolean {
-  return parseBoolean(process.env.PRODUCTION || 'false');
-}
-
-setupEnvironment(getProductionFlag());
+writeOrmConfig();

@@ -29,6 +29,12 @@ export class UpdateUserProfileDTO implements Partial<IUserProfile> {
   email?: string;
 
   @ApiProperty({
+    description: 'Numero unico de identidad DUI del titular. Largo de cadena maximo: 10 caracteres.',
+    required: true
+  })
+  identityDocument?: string;
+
+  @ApiProperty({
     description: 'Numeros telefonicos extra',
     required: false
   })
@@ -36,7 +42,7 @@ export class UpdateUserProfileDTO implements Partial<IUserProfile> {
 
   // relationships
   @ApiProperty({
-    description: 'Usuario asignado a este perfil',
+    description: 'El UUID del usuario asignado a este perfil',
     required: false
   })
   user?: UUID;

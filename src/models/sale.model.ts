@@ -62,13 +62,6 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
   ownerLastName: string;
 
   @ApiProperty({
-    description: 'Numero unico de identidad DUI del titular.',
-    required: true
-  })
-  @Column({length: 10})
-  identityDocument: string;
-
-  @ApiProperty({
     description: 'Usuario del titular si existe.',
     required: false
   })

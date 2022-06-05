@@ -6,6 +6,7 @@ export interface IUserProfile extends IResource {
   user: IUser | UUID;
   firstName: string;
   lastName: string;
+  identityDocument: string;
   phone?: string;
   email?: string;
   additionalPhonesString?: string;

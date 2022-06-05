@@ -1,16 +1,17 @@
-import { ApiBearerAuth, ApiBody, ApiHeader, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Headers, Post, Res } from '@nestjs/common';
 
-import { catchError, map, Observable, of } from 'rxjs';
 import { Response } from 'express';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 import { LoginBody } from 'auth/models/login.body-request';
 import { SgiResponse } from 'interfaces/_response.interface';
+import { SecurityService } from 'auth/services/security.service';
 import { RegisterBody } from 'auth/models/register.body-request';
-import { CONFIRMATION_ERROR, LOGIN_ERROR, SecurityService } from 'auth/services/security.service';
 import { LoginRequest } from 'auth/interfaces/_login-request.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { LoginResult } from 'auth/interfaces/_login-result.interface';
+import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -23,25 +24,36 @@ export class AuthController {
     type: LoginBody,
     description: 'Retorna un resultado de inicio de sesión, con una bandera de exito, un mensaje, ' +
     'y en caso de exito un token de acceso. Aparte del nombre de usuario y contraseña, debe recibir ' +
-    'un tercer paramentro que debe ir vacío para atrapar bots indeseados.'
+    'un tercer paramentro que debe ir vacío para atrapar bots indeseados. (deshabilitado por el momento).'
   })
   login(@Body() bodyRequest: LoginRequest, @Res() res: Response) {
     return this._securityService
       .login(bodyRequest.username, bodyRequest.password, '')
       .pipe(
         catchError(
-          (err: Error): Observable<SgiResponse<LoginResult|Error>> => {
-            if (err.name === LOGIN_ERROR) {
-              return of({
-                statusCode: 401,
-                message: 'Login failed! Wrong credentials.'
-              })
+          (loginError): Observable<LoginResult> => {
+            const result: LoginResult = {
+              success: false,
+              message: 'error while trying to login',
+              errorDetail: loginError,
             }
+            return of(result);
           }
         ),
         map(
-          (response: SgiResponse) => res.status(201).json(response)
-        )
+          (result: LoginResult) => {
+            if (result.errorDetail) {
+              const response = this._securityService.createLoginErrorResponseObject(result);
+              return res.status(response.statusCode).send(response);
+            }
+            const response: SgiResponse<LoginResult> = {
+              statusCode: 200,
+              message: result.message,
+              data: result,
+            }
+            return res.status(response.statusCode).json(response);
+          }
+        ),
       );
   }
 
@@ -55,28 +67,31 @@ export class AuthController {
     return this._securityService.register(bodyRequest)
       .pipe(
         catchError(
-          (err: LoginResult): Observable<SgiResponse<LoginResult|Error>> => {
-            let response: SgiResponse;
-            if (err.message === CONFIRMATION_ERROR) {
-              const error = err.errorDetail as Error;
-              response = {
-                statusCode: 400,
-                message: error.message,
-                data: error
-              }
-            } else {
-              response = {
-                statusCode: 500,
-                message: err.message,
-                data: err
-              }
+          (loginError): Observable<RegisterResult> => {
+            console.log(loginError);
+            
+            const result: LoginResult = {
+              success: false,
+              message: 'error while trying to register',
+              errorDetail: loginError,
             }
-            return of(response);
+            return of(result);
           }
         ),
         map(
-          (response: SgiResponse) => res.status(201).json(response)
-        )
+          (result: RegisterResult) => {
+            if (result.errorDetail) {
+              const response = this._securityService.createLoginErrorResponseObject(result);
+              return res.status(response.statusCode).send(response);
+            }
+            const response: SgiResponse = {
+              statusCode: 201,
+              message: result.message,
+              data: result
+            }
+            return res.status(201).json(response)
+          }
+        ),
       );
   }
 

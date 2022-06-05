@@ -10,6 +10,5 @@ export interface ISale extends IResource, Partial<ITimestampable> {
   ownerFirstName: string;
   ownerLastName: string;
   user?: IUser | UUID;
-  identityDocument: string;
   tour: ITour | UUID;
 }

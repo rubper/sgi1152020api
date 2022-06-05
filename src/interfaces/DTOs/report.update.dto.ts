@@ -8,14 +8,14 @@ import { UUID } from "types/uuid.type";
 
 export class UpdateReportDTO implements Partial<IReport> {
   @ApiProperty({
-    description: 'Fecha del reporte',
+    description: 'Fecha del reporte en ISO string',
     required: false,
   })
   @Column({type: 'timestamp'})
-  date?: Moment;
+  date?: string;
 
   @ApiProperty({
-    description: 'Tipo del reporte',
+    description: 'Tipo del reporte. Valores permitidos: \'sales\' \'guides\'',
     required: false,
   })
   @Column({length: 50})
@@ -27,16 +27,16 @@ export class UpdateReportDTO implements Partial<IReport> {
       'valores separados por comas (o puntos y comas segun la region)' +
       'es posible decidir, mediante esta bandera, el tipo de dato que ' +
       'se almacenará en los campos X, Y, y demás, del detalle de reporte.' +
-      'Los valores permitidos son: \'valoresNumericos\' | \'valoresSeparadosComas\'',
+      'Valores permitidos: \'valoresNumericos\' | \'valoresSeparadosComas\'',
     required: false,
   })
   @Column({length: 21})
   dataType?: ValueTypes;
 
   @ApiProperty({
-    description: 'El usuario asociado al guía.',
+    description: 'El UUID del usuario del autor del reporte.',
     required: true
   })
-  user?: UUID;
+  author?: UUID;
 
 }

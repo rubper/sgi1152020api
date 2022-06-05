@@ -6,7 +6,7 @@ import { IGuide } from 'interfaces/guide.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
 
 import { Moment } from 'moment';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
@@ -78,7 +78,8 @@ export class Guide extends BuildableEntity<IGuide> implements IGuide {
     description: 'El usuario asociado al guía.',
     required: true
   })
-  @OneToOne(type => User, user => user.guide)
+  @OneToOne(() => User, user => user.guide)
+  @JoinColumn()
   user: User;
   
   @ApiProperty({
@@ -86,6 +87,6 @@ export class Guide extends BuildableEntity<IGuide> implements IGuide {
     required: false,
     isArray: true
   })
-  @OneToMany(type => Tour, tour => tour.guide, {nullable: true})
+  @OneToMany(() => Tour, tour => tour.guide, {nullable: true})
   toursHistory?: Tour[];
 }

@@ -11,11 +11,11 @@ import { ValueTypes } from 'constants/value-types.constant';
 export class CreateReportDTO implements Partial<IReport> {
 
   @ApiProperty({
-    description: 'Fecha del reporte',
+    description: 'Fecha del reporte en ISO string',
     required: true,
   })
   @Column({type: 'timestamp'})
-  date: Moment;
+  date: string;
 
   @ApiProperty({
     description: 'Tipo del reporte',
@@ -37,9 +37,9 @@ export class CreateReportDTO implements Partial<IReport> {
   dataType: ValueTypes;
 
   @ApiProperty({
-    description: 'El usuario asociado al guía.',
+    description: 'El UUID del usuario del autor del report.',
     required: true
   })
-  user: UUID;
+  author: UUID;
 
 }

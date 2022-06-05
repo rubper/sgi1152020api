@@ -1,81 +1,86 @@
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 
+import { Response } from 'express';
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { Guide } from 'models/guide.model';
 import { UserService } from 'core/services/user.service';
 import { SgiResponse } from 'interfaces/_response.interface';
 import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
-import { CONFIRMATION_ERROR, SecurityService } from 'auth/services/security.service';
-import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
-import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
+import { SecurityService } from 'auth/services/security.service';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
-import { RegisterResult } from 'auth/interfaces/_register-result.interface';
+import { User } from 'models/user.model';
+import { RegisterBody } from 'auth/models/register.body-request';
 import { LoginResult } from 'auth/interfaces/_login-result.interface';
-import { Response } from 'express';
+import { RegisterResult } from 'auth/interfaces/_register-result.interface';
+import { SetRoles } from 'auth/helpers/auth.decorators';
+
 
 @Controller('user')
+@SetRoles('admin')
 export class UserController {
   constructor(
-    private readonly userService: UserService,
+    private readonly _userService: UserService,
     private _securityService: SecurityService,
   ) {}
 
   @Post('register')
-  @ApiBody({type: CreateGuideDTO})
-  create(@Body() createUserDto: RegisterRequest, @Res() res: Response): Observable<Response<SgiResponse>> {
-    return this._securityService
-      .register(createUserDto)
+  @ApiBody({type: RegisterBody})
+  create(@Body() bodyRequest: RegisterRequest, @Res() res: Response): Observable<Response<SgiResponse>> {
+    return this._securityService.register(bodyRequest)
       .pipe(
         catchError(
-          (err: LoginResult): Observable<SgiResponse<LoginResult|Error>> => {
-            let response: SgiResponse;
-            if (err.message === CONFIRMATION_ERROR) {
-              const error = err.errorDetail as Error;
-              response = {
-                statusCode: 400,
-                message: error.message,
-                data: error
-              }
-            } else {
-              response = {
-                statusCode: 500,
-                message: err.message,
-                data: err
-              }
+          (loginError): Observable<RegisterResult> => {
+            console.log(loginError);
+            
+            const result: LoginResult = {
+              success: false,
+              message: 'error while trying to register',
+              errorDetail: loginError,
             }
-            return of(response);
+            return of(result);
           }
         ),
         map(
-          (response: SgiResponse) => res.status(201).json(response)
-        )
+          (result: RegisterResult) => {
+            if (result.errorDetail) {
+              const response = this._securityService.createLoginErrorResponseObject(result);
+              return res.status(response.statusCode).send(response);
+            }
+            const response: SgiResponse = {
+              statusCode: 201,
+              message: result.message,
+              data: result
+            }
+            return res.status(201).json(response)
+          }
+        ),
       );
   }
 
   @Get()
-  @ApiResponse({type: Guide, isArray: true})
+  @ApiResponse({type: User, isArray: true})
   findAll() {
-    return this.userService.findAll();
+    return this._userService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({type: Guide})
+  @ApiResponse({type: User})
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+    return this._userService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiBody({type: UpdateGuideDTO})
+  @ApiBody({type: UpdateUserDTO})
   @ApiResponse({type: Guide})
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
-    return this.userService.update(id, updateUserDto);
+    return this._userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @ApiResponse({type: null})
   remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+    return this._userService.remove(id);
   }
 }

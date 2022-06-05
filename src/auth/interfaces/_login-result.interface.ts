@@ -5,5 +5,5 @@ export interface LoginResult {
   message: string;
   token?: string;
   session?: Session;
-  errorDetail?: Record<string, any>;
+  errorDetail?: Error;
 }

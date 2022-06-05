@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Observable, of, from } from 'rxjs';
-import { FindConditions, FindOneOptions, FindOperator } from 'typeorm';
+import { FindConditions, FindManyOptions, FindOneOptions, FindOperator } from 'typeorm';
 
 import { UUID } from 'types/uuid.type';
 import { User } from 'models/user.model';
@@ -19,24 +19,26 @@ export class UserService {
     return User.find();
   }
 
-  findOne(id: string) {
+  findOne(id: string): Promise<User> {
     return User.findOne(id);
   }
 
   searchUser(user: UUID | string | User| Observable<User>): Observable<User>  {
     let user$: Observable<User>;
-    if (user instanceof Observable) {
-      user$ = user;
-    } else if (user instanceof User) {
-      user$ = of(user);
-    } else if (isUUIDValid(user)) {      
+    const userIsString = typeof user === 'string';
+    const hasValidUUID = userIsString ? isUUIDValid(user) : false;
+    if (userIsString && hasValidUUID) {
       user$ = from(
         this.findOne(user)
       );
-    } else {
+    } else if (userIsString) {
       user$ = from(
         this.findByUsername(user)
       );
+    } else if (user instanceof Observable) {     
+      user$ = user; 
+    } else {
+      user$ = of(user);
     }
     return user$;
   }
@@ -67,5 +69,14 @@ export class UserService {
       where: findConditions
     };
     return User.findOne(null, findOneOptions);
+  }
+
+  alreadyExists(username: string): Promise<boolean> {
+    const options: FindManyOptions<User> = {
+      where: {username}
+    }
+    return User.count(options).then(
+      (count: number) => count > 0
+    );
   }
 }

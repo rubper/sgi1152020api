@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { compare, genSalt, hash } from 'bcrypt';
 import { decode, JwtPayload, sign, SignOptions } from 'jsonwebtoken';
-import { catchError, combineLatest, firstValueFrom, from, map,  Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, combineLatest, first, from, map,  Observable, of, switchMap, tap, throwError } from 'rxjs';
 
 import { Role } from 'models/role.model';
 import { User } from 'models/user.model';
@@ -26,9 +26,9 @@ import { UserProfileService } from 'core/services/user-profile.service';
 import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
 import { UserProfile } from 'models/user-profile.model';
 import { SgiResponse } from 'interfaces/_response.interface';
-
-export const LOGIN_ERROR = 'loginfailure';
-export const CONFIRMATION_ERROR = 'nomatch';
+import { AuthErrorFactory, AuthErrors } from 'auth/helpers/auth.errors';
+import { IUser } from 'auth/interfaces/user.interface';
+import { IUserProfile } from 'interfaces/user-profile.interface';
 
 @Injectable()
 export class SecurityService {
@@ -87,7 +87,7 @@ export class SecurityService {
    *
    * @param username the username of the user 
    * @param password the password for the login
-   * @param passwordConfirmation the confirmation of the password
+   * @param honeypot the field that must be empty if a human is logging in
    * @returns an observable with a login result
    */
   login(username: string, password: string, honeypot: string): Observable<LoginResult> {
@@ -99,10 +99,21 @@ export class SecurityService {
     return from(this._userService.findByUsername(username))
       .pipe(
         switchMap(
-          (user: User) => combineLatest([
-            of(user),
-            this.hasActiveSession(user.uuid)
-          ])
+          (user: User) => {
+            // step validate if user exists
+            if (!user && !user?.uuid) {
+              return throwError(
+                this.errorFactoryGenerator(
+                  AuthErrors.NOTFOUND_ERROR,
+                  'user couldn\'t be found'
+                )
+              );
+            }
+            return combineLatest([
+              of(user),
+              this.hasActiveSession(user.uuid)
+            ]);
+          }
         ),
         map(
           ([user, result]: [User, ActiveSessionResult]) => {
@@ -130,26 +141,17 @@ export class SecurityService {
         ),
         switchMap(
           ([user, success]: [User, boolean]) => {
-            const result = this.createLoginResult(user, success);
-            if (!result.success) {
-              const loginFailure = new Error(result.message);
-              loginFailure.name = LOGIN_ERROR;
+            if (!success) {
+              const message = 'password verification failed';
+              const loginFailure = new Error(message);
+              loginFailure.name = AuthErrors.LOGIN_ERROR;
               return throwError(() => loginFailure)
             }
+            const result = this.createLoginResult(user);
             return combineLatest([ 
               of(result),
               this.createUserSession(result.token, user)
             ]);
-          }
-        ),
-        catchError(
-          (error: Error) => {
-            console.error(error);
-            const errorResult: LoginResult = {
-              success: false,
-              message: LOGIN_ERROR
-            };
-            return of(errorResult);
           }
         ),
         map(
@@ -162,22 +164,50 @@ export class SecurityService {
       );
   }
   
-  register(registerData: RegisterRequest): Observable<SgiResponse<RegisterResult>> {
+  register(registerData: RegisterRequest): Observable<RegisterResult> {
     const password = registerData.password.trim();
-    if (password !== registerData.passwordConfirmation.trim()) {
-      return throwError((): LoginResult => {
-        const noMatchMessage ='password confirmation doesn\'t match';
-        const err = new Error(noMatchMessage);
-        return {
-          success: false,
-          message: CONFIRMATION_ERROR,
-          errorDetail: err,
-        }
-      })
-    }
-    return this.generatePasswordHash(password)
+    // if password is the same as its confirmation, raise validity flag
+    const passwordsMatch$ = of(password === registerData.passwordConfirmation.trim());
+    // if username doesnt exists, raise validity flag
+    const doesntExist$ = from(
+      this._userService.alreadyExists(registerData.username)
+      ).pipe(
+        map(
+          (exists: boolean) => !exists
+        ),
+        first(),
+      );
+    // pack checks
+    const validityChecks$ = [ doesntExist$, passwordsMatch$ ];
+    return combineLatest(validityChecks$)
       .pipe(
         switchMap(
+          // step 0: check validity
+          (validityChecks: [boolean, boolean]): Observable<PasswordHash>=> {
+            const [doesntExist, passwordsMatch] = validityChecks;            
+            const invalidRequest = !validityChecks.every((check: boolean) => check);
+            if (invalidRequest) {
+              let errorFactory:AuthErrorFactory;
+                // if password confirmation doesnt match
+              if (!passwordsMatch) {
+                errorFactory = this.errorFactoryGenerator(
+                  AuthErrors.CONFIRMATION_ERROR, 
+                  'password confirmation doesn\'t match'
+                );
+                // if already exists
+              } else if (!doesntExist) {
+                errorFactory = this.errorFactoryGenerator(
+                  AuthErrors.EXISTS_ERROR, 
+                  'user already exists'
+                );
+              }
+              return throwError(errorFactory);
+            }
+            return this.generatePasswordHash(password)
+          }
+        ),
+        switchMap(
+          // step 1: create user
           (hashResult: PasswordHash) => {
             const user = new User({
               username: registerData.username,
@@ -188,53 +218,48 @@ export class SecurityService {
           }
         ),
         switchMap(
+          // step 2: create related session and profile
           (savedUser: User) => {
-            const result = this.createLoginResult(savedUser, true);
-            const profile$ = this.createUserProfile({
+            const sessionlessLoginResult = this.createLoginResult(savedUser);
+            const userProfile$ = this.createUserProfile({
               firstName: 'DEMO',
               lastName: 'DEMO',
               user: savedUser.uuid,
+              identityDocument: '00000000-0',
             });
+            const userSession$ = this.createUserSession(sessionlessLoginResult.token, savedUser);
             return combineLatest([
-              this.createUserSession(result.token, savedUser),
-              of(result),
-              profile$
+              of(sessionlessLoginResult),
+              userSession$,
+              userProfile$
             ])
           }
         ),
-        catchError(
-          (error: Error) => {
-            console.error(error);
-            const errorResult: LoginResult = {
-              success: false,
-              message: LOGIN_ERROR,
-              errorDetail: error
-            };
-            return of(errorResult);
+        switchMap(
+          // step 3: save created profile in user
+          ([sessionlessResult, session, profile]: [LoginResult, Session, UserProfile]) => {
+            const user = User.create(session.user);
+            user.profile = profile;
+            const saveResult$ = from(user.save());
+            return combineLatest([
+              of(sessionlessResult),
+              saveResult$
+            ])
           }
         ),
         map(
-          ([session, sessionlessResult, profile]: [Session, LoginResult, UserProfile]): RegisterResult => {
+          // put them together
+          ([sessionlessResult, userResult]: [LoginResult, User]): RegisterResult => {
             let registerResult: RegisterResult;
             if ( !sessionlessResult.success ) {
               registerResult = sessionlessResult; 
             } else {
               registerResult = {
                 ...sessionlessResult,
-                createdUser: session.user,
+                createdUser: userResult,
               };
             }
             return registerResult;
-          }
-        ),
-        map(
-          (result: RegisterResult): SgiResponse<RegisterResult> => {
-            const response: SgiResponse = {
-              statusCode: 201,
-              message: 'success',
-              data: result,
-            }
-            return response
           }
         ),
       );
@@ -309,8 +334,8 @@ export class SecurityService {
     );
   }
 
-  hasActiveSession(user: UUID | User): Observable<ActiveSessionResult> {
-    let user$: Observable<User>;
+  hasActiveSession(user: UUID | IUser): Observable<ActiveSessionResult> {
+    let user$: Observable<IUser>;
     if (typeof user === 'string') {
       user$ = this._userService.searchUser(user);
     } else {
@@ -320,7 +345,7 @@ export class SecurityService {
       .pipe(
         switchMap(
           // get all user sessions
-          (userObject: User) => {            
+          (userObject: IUser) => {            
             return from(
               this._userSessionService.search({
                 'user': { value: userObject.uuid, operator: 'equal' },
@@ -360,7 +385,7 @@ export class SecurityService {
    * @param success - whether the login was a success or not
    * @returns a login result object
    */
-  createLoginResult(user: User, success: boolean): LoginResult {
+  createLoginResult(user: User): LoginResult {
     const username = user.username;
     // get roles string array
     const userRoles = user.roles;
@@ -372,28 +397,24 @@ export class SecurityService {
     // prepare response
     let token: string;
     let message: string;
-    if (success) {
-      // set up token payload
-      const tokenData = {
-        roles,
-        username,
-        sgiapp: Secrets.APP_HASH,
-      };
-      const tokenConfig: SignOptions = {
-        algorithm: 'HS256', 
-        subject: user.uuid,
-        expiresIn: '7d',
-      }; 
-      // get token
-      token = sign(tokenData, Secrets.PASSWORD, tokenConfig);
-      message = 'success';
-    } else {
-      message = 'password verification failed';
-    }
+    // set up token payload
+    const tokenData = {
+      roles,
+      username,
+      sgiapp: Secrets.APP_HASH,
+    };
+    const tokenConfig: SignOptions = {
+      algorithm: 'HS256', 
+      subject: user.uuid,
+      expiresIn: '7d',
+    }; 
+    // get token
+    token = sign(tokenData, Secrets.PASSWORD, tokenConfig);
+    message = 'success';
     return {
       token,
-      success,
       message,
+      success: true,
     }
   }
 
@@ -460,6 +481,66 @@ export class SecurityService {
         ),
         map( (sessions: Session[]) => sessions[0] )
       )
+  }
+
+  errorFactoryGenerator(authError: AuthErrors, errorMessage: string): AuthErrorFactory {
+    return (): Error => {
+      const auxError = new Error(errorMessage);
+      auxError.name = authError;
+      return auxError;
+    }
+  }
+  
+  createLoginErrorResponseObject(err: LoginResult): SgiResponse<Error> {
+    let response: SgiResponse;
+    const error = err.errorDetail;
+    switch (err.errorDetail.name) {
+      case AuthErrors.CONFIRMATION_ERROR:
+        response = {
+          statusCode: 400,
+          message: error.message,
+          errorMessage: error.name,
+          errorDetail: error,
+        };
+        break;
+
+      case AuthErrors.LOGIN_ERROR:
+        response = {
+          statusCode: 401,
+          message: 'Login failed! Wrong credentials.',
+          errorMessage: error.name,
+          errorDetail: error,
+        };
+        break;
+    
+      case AuthErrors.NOTFOUND_ERROR:
+        response = {
+          statusCode: 404,
+          message: 'User couldn\'t be found, please provide another user.',
+          errorMessage: error.name,
+          errorDetail: error,
+        };
+        break;
+        
+      case AuthErrors.EXISTS_ERROR:
+        response = {
+          statusCode: 400,
+          message: 'That username is already taken.',
+          errorMessage: error.name,
+          errorDetail: error,
+        };
+        break;
+
+      default:
+        response = {
+          statusCode: 500,
+          message: err.message,
+          errorMessage: error.name,
+          errorDetail: error,
+        }
+        break;
+    }
+    return response;
   }
 }
 

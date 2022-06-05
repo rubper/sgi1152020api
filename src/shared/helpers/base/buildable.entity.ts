@@ -1,10 +1,13 @@
-import { BaseEntity, FindConditions, FindOperator, ObjectType } from 'typeorm';
+import { BaseEntity, FindConditions, FindManyOptions, FindOneOptions, FindOperator, ObjectID, ObjectType, RemoveOptions, SaveOptions } from 'typeorm';
 import { CreateDTO } from './create-dto.type';
 import { UpdateDTO } from './update-dto.type';
 import { IResource } from 'interfaces/_resource.interface';
 import { DbFilterParams } from 'types/_db-filter-params.type';
 import { EntityFieldsNames } from 'typeorm/common/EntityFieldsNames';
 import { SearchParams } from 'auth/interfaces/_search-params.interface';
+import { from, Observable } from 'rxjs';
+
+export type FindCriteria = string | number | Date | ObjectID | FindOneOptions<any> | FindConditions<any>;
 
 export type TypeORMOrder<T = any> = {
   [P in EntityFieldsNames<T>]?: "ASC" | "DESC" | 1 | -1;
@@ -31,6 +34,60 @@ export class BuildableEntity<T extends IResource> extends BaseEntity {
         this.mapValueFromBase(baseObject);
     }
   }
+
+  /**
+   * Saves current entity in the database.
+   * If entity does not exist in the database then inserts, otherwise updates.
+   */
+  save$(options?: SaveOptions): Observable<this> {
+    return from(this.save(options))
+  };
+  /**
+   * Removes current entity from the database.
+   */
+  remove$(options?: RemoveOptions): Observable<this> {
+    return from(this.remove(options))
+  };
+
+  /**
+   * Records the delete date of current entity.
+   */
+  softRemove$(options?: SaveOptions): Observable<this> {
+  return from(this.softRemove(options))    
+  };
+  /**
+   * Finds entities that match given options.
+   */
+  static find$<T extends BaseEntity>(this: BuildableEntity<any>, options?: FindManyOptions<T>): Observable<T[]> {
+    return from(BuildableEntity.find<T>(options))
+  };
+  /**
+   * Finds entities that match given find options.
+   * Also counts all entities that match given conditions,
+   * but ignores pagination settings (from and take options).
+   */
+  static findAndCount$<T extends BaseEntity>(this: BuildableEntity<any>, options?: FindManyOptions<T>): Observable<[T[], number]> {
+    return from(BuildableEntity.findAndCount<T>(options))
+  };
+  /**
+   * Finds entities by ids.
+   * Optionally find options can be applied.
+   */
+  static findByIds$<T extends BaseEntity>(this: BuildableEntity<any>, ids: any[], options?: FindManyOptions<T>): Observable<T[]> {
+    return from(BuildableEntity.findByIds<T>(ids, options))
+  };
+  /**
+   * Finds first entity that matches given options.
+   */
+  static findOne$<T extends BaseEntity>(this: BuildableEntity<any>, findCriteria?: FindCriteria, options?: FindOneOptions<T>): Observable<T | undefined> {
+    return from(BuildableEntity.findOne<T>(findCriteria, options))
+  };
+  /**
+   * Finds first entity that matches given options.
+   */
+  static findOneOrFail$<T extends IResource & BaseEntity>(this: BuildableEntity<T>, id?: FindCriteria, options?: FindOneOptions<T>): Observable<T> {
+  return from(BuildableEntity.findOneOrFail<T>(id, options));
+};
 
   /**
    * Maps properties from the given base object, into the current class

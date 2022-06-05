@@ -3,7 +3,7 @@ import { UUID } from 'types/uuid.type';
 
 import { IUserProfile } from 'interfaces/user-profile.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
-import { Column, OneToOne, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { Column, OneToOne, PrimaryGeneratedColumn, Entity, Unique, JoinColumn } from 'typeorm';
 import { Separators } from 'constants/separators.constant';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -51,6 +51,13 @@ export class UserProfile extends BuildableEntity<IUserProfile> implements IUserP
   })
   @Column({nullable: true, type: 'text'})
   additionalPhonesString?: string;
+  
+  @ApiProperty({
+    description: 'Numero unico de identidad DUI del titular.',
+    default: '00000000-0'
+  })
+  @Column({length: 10})
+  identityDocument: string;
 
   // relationships
   @ApiProperty({
@@ -59,6 +66,7 @@ export class UserProfile extends BuildableEntity<IUserProfile> implements IUserP
     type: () => User
   })
   @OneToOne(() => User, user => user.profile)
+  @JoinColumn()
   user: User;
 
   get additionalPhones(): string[] {

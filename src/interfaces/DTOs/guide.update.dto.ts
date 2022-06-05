@@ -4,7 +4,7 @@ import { UUID } from 'types/uuid.type';
 
 export class UpdateGuideDTO implements Partial<IGuide> {
   @ApiProperty({
-    description: 'El usuario asociado al guía.',
+    description: 'El UUID del usuario asociado al guía.',
     required: true
   })
   user?: UUID;
@@ -29,7 +29,7 @@ export class UpdateGuideDTO implements Partial<IGuide> {
   })
   hoursAggregate?: number = 0;
   @ApiProperty({
-    description: 'Arreglo de visitas asociadas al guia.',
+    description: 'Arreglo de UUIDs de visitas asociadas al guia.',
     required: false
   })
   toursHistory?: UUID[];

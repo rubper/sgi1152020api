@@ -3,7 +3,7 @@ import { UUID } from 'types/uuid.type';
 import { UserProfile } from './user-profile.model';
 import { IUser } from 'auth/interfaces/user.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToMany } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToMany, Unique, JoinColumn } from 'typeorm';
 import { Guide } from './guide.model';
 import { Report } from './report.model';
 import { Sale } from './sale.model';
@@ -23,7 +23,7 @@ export class User extends BuildableEntity<IUser> implements IUser {
     description: 'Nombre de usuario unico',
     required: true
   })
-  @Column()
+  @Column({unique: true})
   username: string;
 
   @Column()
@@ -39,7 +39,7 @@ export class User extends BuildableEntity<IUser> implements IUser {
     description: 'Roles del usuario',
     required: false
   })
-  @ManyToMany(type => Role, role => role.users)
+  @ManyToMany(() => Role, role => role.users)
   roles?: Role[];
 
   @ApiProperty({
@@ -68,6 +68,7 @@ export class User extends BuildableEntity<IUser> implements IUser {
     required: false
   })
   @OneToOne(() => UserProfile, profile => profile.user, {nullable: true})
+  @JoinColumn()
   profile?: UserProfile;
 
   // relationships
@@ -77,6 +78,7 @@ export class User extends BuildableEntity<IUser> implements IUser {
     type: () => Guide
   })
   @OneToOne(() => Guide, guide => guide.user, {nullable: true})
+  @JoinColumn()
   guide?: Guide;
 
   @ApiProperty({

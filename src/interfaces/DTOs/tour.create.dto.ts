@@ -13,14 +13,14 @@ export class CreateTourDTO implements Partial<ITour> {
   date: string;
 
   @ApiProperty({
-    description: `Tipo de visita. Valores aceptados: 'excursion' | 'familiar'. `,
+    description: `Tipo de visita. Valores permitidos: 'excursion' | 'familiar'. `,
     required: true
   })
   type: TourTypes;
 
   // relationships
   @ApiProperty({
-    description: 'Guia asignado a la visita.',
+    description: 'El UUID del guia asignado a la visita.',
     required: true
   })
   guide: UUID;

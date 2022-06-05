@@ -6,11 +6,16 @@
    "private": true,
    "license": "UNLICENSED",
    "scripts": {
-      "env:prod": "node dist/src/scripts/set-prod-env.script.js",
-      "setup:prod": "node dist/src/setup.js",
+      "setup:orm": "node dist/src/scripts/set-orm-file.script.js",
+      "setup:env": "node dist/src/scripts/set-env-file.script.js",
+      "setup:orm:dev": "ts-node src/scripts/set-orm-file.script.ts",
+      "setup:env:dev": "ts-node src/scripts/set-env-file.script.ts",
+      "dev:setup": "nest build && npm run setup:env:dev && npm run setup:orm:dev",
+      "setup": "nest build && npm run setup:env && npm run setup:orm",
       "prebuild": "rimraf dist",
-      "build": "nest build && npm run env:prod",
-      "build:clean": "rimraf dist && nest build",
+      "build": "npm run setup && nest build",
+      "build:dev": "npm run dev:setup && nest build",
+      "build:clean": "rimraf dist && npm run build",
       "build:prod": "npm run build",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "npm run build && npm run start:prod",
@@ -27,8 +32,10 @@
       "generate:controllers": "ts-node ./src/scripts/controller-generator.script",
       "generate:gqlresolvers": "ts-node ./src/scripts/graphql-resolver-generator.script",
       "typeorm": "npm run build && ts-node --require ts-node/register ./node_modules/typeorm/cli.js",
-      "typeorm:prod": "node ./node_modules/typeorm/cli.js"
-
+      "typeorm:prod": "node ./node_modules/typeorm/cli.js",
+      "migration:generate": "npm run typeorm migration:generate -- -n",
+      "migration:run": "npm run typeorm migration:run",
+      "migration:revert": "npm run typeorm migration:revert"
    },
    "dependencies": {
       "@apollo/gateway": "^0.50.1",
@@ -61,6 +68,7 @@
       "@nestjs/testing": "^8.0.0",
       "@types/express": "^4.17.13",
       "@types/jest": "27.4.1",
+      "@types/lodash": "^4.14.182",
       "@types/node": "^16.11.10",
       "@types/supertest": "^2.0.11",
       "@typescript-eslint/eslint-plugin": "^5.0.0",

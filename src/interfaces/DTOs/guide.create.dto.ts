@@ -4,7 +4,7 @@ import { UUID } from 'types/uuid.type';
 
 export class CreateGuideDTO implements Partial<IGuide> {
   @ApiProperty({
-    description: 'El usuario asociado al guía.',
+    description: 'El UUID del usuario asociado al guía.',
     required: true
   })
   user: UUID;
