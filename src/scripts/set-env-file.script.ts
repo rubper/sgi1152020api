@@ -4,6 +4,7 @@ import {writeFile} from 'fs/promises';
 import { parseBoolean } from 'shared/helpers/functions/parse-boolean.function';
 
 function configDotenv(isProd: boolean): boolean {
+  console.info(`[ 'AppInfo' ] Configuring DotEnv...`);
   const dotenvPath = isProd ? '.env' : 'dev.env';
   // config dotenv
   const configOutput = config({
@@ -62,14 +63,16 @@ export function getProductionFlag(): boolean {
 
 async function setEnvFile() {
   try {
-    configDotenv(getProductionFlag());
+    const isProd = getProductionFlag();
+    const filename = isProd ? '.env' : 'dev.env';
     const envObject = generateEnvironmentObject();
     const outputString = generateEnvOutputString(envObject);
-    console.log(`[ 'AppInfo' ] generating .env file...`)
-    await writeFile('.env', outputString);
-    console.log(`[ 'AppInfo' ] .env file generated successfully`)
+    console.log(`[ 'AppInfo' ] generating ${filename} file...`)
+    await writeFile(filename, outputString);
+    console.log(`[ 'AppInfo' ] ${filename} file generated successfully`)
+    configDotenv(isProd);
   } catch (error) {
-    console.error(`[ 'AppError' ] error writing .env`); 
+    console.error(`[ 'AppError' ] error writing dotenv file`); 
     console.error(error); 
   }
 }
