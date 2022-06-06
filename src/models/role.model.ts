@@ -5,6 +5,7 @@ import { IRole } from 'auth/interfaces/role.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
 import { Entity, Column, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Route } from './route.model';
 
 @Entity()
 export class Role extends BuildableEntity<IRole> implements IRole {
@@ -38,4 +39,11 @@ export class Role extends BuildableEntity<IRole> implements IRole {
   @ManyToMany(type => User, user => user.roles, {nullable: true}) 
   @JoinTable()
   users?: User[];
+  @ApiProperty({
+    description: 'Usuarios que poseen este rol',
+    required: false,
+  })
+  @ManyToMany(type => Route, route => route.roles, {nullable: true}) 
+  @JoinTable()
+  routes?: Route[];
 }

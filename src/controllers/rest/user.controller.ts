@@ -17,6 +17,9 @@ import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 import { AuthGuard } from 'auth/helpers/auth.guard';
 import { RolesGuard } from 'auth/helpers/roles.guard';
 import { SetRoles } from 'auth/helpers/auth.decorators';
+import { Role } from 'models/role.model';
+import { AllowPermissionDTO } from 'interfaces/DTOs/permission.allow.dto';
+import { RestrictPermissionDTO } from 'interfaces/DTOs/permission.restrict.dto';
 
 
 @Controller('user')
@@ -74,6 +77,12 @@ export class UserController {
     return this._userService.findOne(id);
   }
 
+  @Get(':id/roles')
+  @ApiResponse({type: Role, isArray: true})
+  getUserRoles(@Param('id') id: string) {
+    return this._userService.getUserRoles(id);
+  }
+
   @Patch(':id')
   @ApiBody({type: UpdateUserDTO})
   @ApiResponse({type: Guide})
@@ -86,4 +95,25 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this._userService.remove(id);
   }
+
+  @Post('roles/add')
+  @ApiBody({
+    type: AllowPermissionDTO,
+    description: 'Requiere el UUID del usuario, y los roles que se le daran en un arreglo de UUIDs de roles.'
+  })
+  @ApiResponse({type: User})
+  addUserRole(@Param('id') id: string, @Body() allowPermissionDTO: AllowPermissionDTO) {
+    return this._userService.addUserPermissions(allowPermissionDTO.userId, allowPermissionDTO.roleIds);
+  }
+
+  @Post('roles/remove')
+  @ApiBody({
+    type: RestrictPermissionDTO,
+    description: 'Requiere el UUID del usuario, y los roles que se le quitaran en un arreglo de UUIDs de roles.'
+  })
+  @ApiResponse({type: User})
+  removeUserRole(@Param('id') id: string, @Body() allowPermissionDTO: RestrictPermissionDTO) {
+    return this._userService.removeUserPermissions(allowPermissionDTO.userId, allowPermissionDTO.roleIds);
+  }
+
 }

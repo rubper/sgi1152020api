@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { IRole } from 'auth/interfaces/role.interface';
+import { UUID } from 'types/uuid.type';
 
 export class UpdateRoleDTO implements Partial<IRole> {
   @ApiProperty({
@@ -14,4 +15,10 @@ export class UpdateRoleDTO implements Partial<IRole> {
     required: false,
   })
   title?: string;
+
+  @ApiProperty({
+    description: 'Arreglo de UUID de rutas para agregar roles requeridos.',
+    required: false,
+  })
+  roles?: UUID[];
 }

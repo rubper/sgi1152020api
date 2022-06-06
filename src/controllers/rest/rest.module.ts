@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AuthServicesModule } from 'auth/services/auth-services.module';
 import { GuideController } from './guide.controller';
+import { PermissionController } from './permission.controller';
 import { ReportController } from './report.controller';
 import { RoleController } from './role.controller';
+import { RouteController } from './route.controller';
 import { SaleController } from './sale.controller';
 import { TourController } from './tour.controller';
 import { UserProfileController } from './user-profile.controller';
@@ -17,8 +19,10 @@ import { UserController } from './user.controller';
   ],
   controllers: [
     GuideController,
+    PermissionController,
     ReportController,
     RoleController,
+    RouteController,
     SaleController,
     TourController,
     UserProfileController,
@@ -26,8 +30,10 @@ import { UserController } from './user.controller';
   ],
   exports: [
     GuideController,
+    PermissionController,
     ReportController,
     RoleController,
+    RouteController,
     SaleController,
     TourController,
     UserProfileController,
@@ -35,8 +41,10 @@ import { UserController } from './user.controller';
   ],
   providers: [
     GuideController,
+    PermissionController,
     ReportController,
     RoleController,
+    RouteController,
     SaleController,
     TourController,
     UserProfileController,

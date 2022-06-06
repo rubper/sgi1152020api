@@ -2,21 +2,24 @@ import { Injectable, CanActivate, ExecutionContext, HttpException } from '@nestj
 import { UserService } from 'core/services/user.service';
 import { SecurityService } from 'auth/services/security.service';
 import { Role } from 'models/role.model';
-import { ROLES_METAKEY } from './auth.decorators';
+import { CONTROLLERID_METAKEY, ROLES_METAKEY } from './auth.decorators';
 import { Reflector } from '@nestjs/core';
 import { AuthErrors } from './auth.errors';
 import { RoleService } from 'core/services/role.service';
+import { RouteService } from 'core/services/route.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private _reflector: Reflector,
     private _roleService: RoleService,
+    private _routeService: RouteService,
     private _securityService: SecurityService,
   ) {}
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
+    const routeName =  this._reflector.get<string>(CONTROLLERID_METAKEY, context.getClass());
     // check if there are roles protecting this route
     const routeRoles = this._reflector.get<string[]>(ROLES_METAKEY, context.getClass());
     if(!routeRoles || routeRoles.length === 0) {

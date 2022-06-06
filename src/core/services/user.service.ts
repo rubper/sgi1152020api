@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, map } from 'rxjs';
 import { FindConditions, FindManyOptions, FindOneOptions, FindOperator } from 'typeorm';
 
 import { UUID } from 'types/uuid.type';
@@ -10,9 +10,11 @@ import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
 import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 import { UserProfile } from 'models/user-profile.model';
 import { Role } from 'models/role.model';
+import { AuthErrors } from 'auth/helpers/auth.errors';
 
 @Injectable()
 export class UserService {
+
   create(createDto: CreateUserDTO) {
     return new User(createDto).save();
   }
@@ -48,6 +50,9 @@ export class UserService {
   update(id: string, updateDto: UpdateUserDTO) {
     return User.findOne(id).then(
       async (user: User) => {
+        if(user && user['username'] && user['username'] === 'admin') {
+          throw new HttpException(AuthErrors.ADMINCHANGE_ERROR, 400);
+        }
         if (updateDto.username) {
           user['username'] = updateDto.username;
         } 
@@ -89,4 +94,37 @@ export class UserService {
       (count: number) => count > 0
     );
   }
+
+  async addUserPermissions(userId: UUID, roleId: UUID | UUID[]) {
+    const roleIds: UUID[] = typeof roleId === 'string' ? [roleId] : roleId;
+    const user: User = await User.findOne(userId);
+    const roles: Role[] = await Role.find<Role>({
+      where: roleIds.map(role => ({uuid: role}))
+    });
+    const userRoles = user.roles.concat(roles);
+    user.roles = userRoles;
+    return user.save();
+  }
+  
+  async removeUserPermissions(userId: UUID, roleId: UUID | UUID[]) {
+    const roleIds = typeof roleId === 'string' ? [roleId] : roleId;
+    const user: User = await User.findOne({
+      relations: ['roles'],
+      where: {uuid: userId}
+    });
+    const userRoles = user.roles.filter((role: Role) => !roleIds.includes(role.uuid));
+    user.roles = userRoles;
+    return user.save();
+  }
+
+  getUserRoles(id: UUID): Observable<Role[]> {
+      return from(
+        User.findOne({
+          relations:['roles'],
+          where: {uuid: id}
+        })
+      ).pipe(
+        map((user: User) => user.roles)
+      )
+    }
 }

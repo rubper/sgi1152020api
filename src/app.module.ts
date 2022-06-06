@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { GqlModuleOptions, GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { GqlModuleOptions } from '@nestjs/graphql';
+import { ApolloDriver } from '@nestjs/apollo';
 
 import { join } from 'path';
 
@@ -15,6 +15,11 @@ import { ResolversModule } from './resolvers/resolvers.module';
 
 import { ControllersModule } from 'controllers/controllers.module';
 import { AuthControllersModule } from 'auth/controllers/auth-controllers.module';
+import { RouteService } from 'core/services/route.service';
+import { SyncResult } from 'auth/interfaces/sync-result.interface';
+import { Subscription } from 'rxjs';
+import { RoleService } from 'core/services/role.service';
+import { PermissionService } from 'core/services/permission.service';
 
 export const graphQlModuleOptions: GqlModuleOptions = {
   driver: ApolloDriver,
@@ -39,4 +44,62 @@ export const graphQlModuleOptions: GqlModuleOptions = {
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit, OnModuleDestroy {
+  private _roleSyncSubscription: Subscription;
+  private _routeSyncSubscription: Subscription;
+  private _permissionSyncSubscription: Subscription;
+  constructor(
+    private _roleService: RoleService,
+    private _routeService: RouteService,
+    private _permissionService: PermissionService,
+  ) { }
+
+  onModuleInit() {
+    // init sync
+    this._roleService.triggerRoleSync();
+    this._routeService.triggerRouteSync();
+    this._permissionService.triggerPermissionSync();
+    this._routeSyncSubscription = this._routeService
+      .onSyncRouteTriggered$
+      .subscribe({
+        next: (result: SyncResult) => {
+          if (!result.success) {
+            console.log(result.failedItems);            
+            throw new Error('Error trying to sync routes');
+          }
+          return true;
+        },
+        error: (error) => console.error(error)
+      });
+    this._roleSyncSubscription = this._roleService
+      .onSyncRoleTriggered$
+      .subscribe({
+        next: (result: SyncResult) => {
+          if (!result.success) {
+            console.log(result.failedItems);            
+            throw new Error('Error trying to sync roles');
+          }
+          return true;
+        },
+        error: (error) => console.error(error)
+      });
+      this._permissionSyncSubscription = this._permissionService
+        .onSyncPermissionTriggered$
+        .subscribe({
+          next: (result: SyncResult) => {
+            if (!result.success) {
+              console.log(result.failedItems);            
+              throw new Error('Error trying to sync roles');
+            }
+            return true;
+          },
+          error: (error) => console.error(error)
+        });
+  }
+
+  onModuleDestroy() {
+    this._roleSyncSubscription.unsubscribe();
+    this._routeSyncSubscription.unsubscribe();
+    this._permissionSyncSubscription.unsubscribe();
+  }
+}
