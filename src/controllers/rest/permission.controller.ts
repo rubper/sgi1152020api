@@ -4,11 +4,11 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { RolesGuard } from 'auth/helpers/roles.guard';
 import { PermissionService } from 'core/services/permission.service';
-import { CreatePermissionDTO } from 'interfaces/DTOs/permission.create.dto';
-import { RemovePermissionDTO } from 'interfaces/DTOs/permission.remove.dto';
+import { CreatePermissionDTO } from 'DTOs/permission.create.dto';
+import { RemovePermissionDTO } from 'DTOs/permission.remove.dto';
 import { RoleService } from 'core/services/role.service';
-import { AllowPermissionDTO } from 'interfaces/DTOs/permission.allow.dto';
-import { RestrictPermissionDTO } from 'interfaces/DTOs/permission.restrict.dto';
+import { AllowPermissionDTO } from 'DTOs/permission.allow.dto';
+import { RestrictPermissionDTO } from 'DTOs/permission.restrict.dto';
 
 @Controller('permission')
 @SetRoles()

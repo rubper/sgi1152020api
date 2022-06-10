@@ -8,6 +8,7 @@ import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
 import { Moment } from 'moment';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { EnrollmentReason } from 'constants/enrollment-reason.constant';
 
 @Entity()
 export class Guide extends BuildableEntity<IGuide> implements IGuide {
@@ -18,20 +19,6 @@ export class Guide extends BuildableEntity<IGuide> implements IGuide {
   })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;
-  
-  @ApiProperty({
-    description: 'Las horas diarias asignadas al guía.',
-    required: true
-  })
-  @Column({ type: 'decimal', default: 0 })
-  fixedHours: number;
-  
-  @ApiProperty({
-    description: 'Total de horas que el guía ha empleado.',
-    required: false
-  })
-  @Column({ type: 'decimal', default: 0 })
-  hoursAggregate: number;
   
   @ApiProperty({
     description: 'Estampa de fecha que marca el inicio del voluntariado' +
@@ -81,12 +68,39 @@ export class Guide extends BuildableEntity<IGuide> implements IGuide {
   @OneToOne(() => User, user => user.guide)
   @JoinColumn()
   user: User;
-  
+
   @ApiProperty({
-    description: 'Arreglo de visitas asociadas al guia.',
+    description: 'La carrera cursada actualmente por el solicitante.',
     required: false,
-    isArray: true
+    readOnly: true,
   })
-  @OneToMany(() => Tour, tour => tour.guide, {nullable: true})
-  toursHistory?: Tour[];
+  carreer?: string;
+  @ApiProperty({
+    description: 'El numero de telefono del solicitante.',
+    required: false,
+    readOnly: true,
+  })
+  telephone?: string;
+  @ApiProperty({
+    description: 'El correo electronico del solicitante.',
+    required: false,
+    readOnly: true,
+  })
+  email?: string;
+  @ApiProperty({
+    description: 'Otras organizaciones en las que el solicitante ha sido voluntario.',
+    required: false,
+    readOnly: true,
+  })
+  previousExperience?: string;
+  @ApiProperty({
+    description: 'Medio por el que se entero el voluntario o voluntaria, del programa.',
+    required: false,
+    readOnly: true,
+  })
+  reason?: string;
+  @ApiProperty({
+    description: 'Motivo por el cual el voluntario entro al programa.'
+  })
+  motivo: EnrollmentReason;
 }

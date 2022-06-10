@@ -9,9 +9,6 @@ import { UUID } from 'types/uuid.type';
 
 export interface IGuide extends IResource, ITimestampable {
   user: IUser | UUID;
-  fixedHours: number;
-  hoursAggregate: number;
   volunteershipStart: Moment | string;
   volunteershipEnd?: Moment | string;
-  toursHistory?: (ITour | UUID)[];
 }

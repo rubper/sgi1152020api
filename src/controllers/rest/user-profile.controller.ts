@@ -3,8 +3,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 
 import { UserProfile } from 'models/user-profile.model';
 import { UserProfileService } from 'core/services/user-profile.service';
-import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
-import { UpdateUserProfileDTO } from 'interfaces/DTOs/user-profile.update.dto';
+import { CreateUserProfileDTO } from 'DTOs/user-profile.create.dto';
+import { UpdateUserProfileDTO } from 'DTOs/user-profile.update.dto';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { AuthGuard } from 'auth/helpers/auth.guard';
 import { RolesGuard } from 'auth/helpers/roles.guard';

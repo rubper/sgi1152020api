@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, Param, UseGuards } from "@nestjs/common";
-import { ApiParam, ApiResponse } from "@nestjs/swagger";
+import { ApiExcludeController, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { SetRoles } from "auth/helpers/auth.decorators";
 import { RolesGuard } from "auth/helpers/roles.guard";
 import { RouteService } from "core/services/route.service";
@@ -8,6 +8,8 @@ import { Route } from "models/route.model";
 import { isUUIDValid } from "shared/helpers/functions/is-uuid-valid.function";
 import { UUID } from "types/uuid.type";
 
+
+@ApiExcludeController()
 @Controller('route')
 @SetRoles()
 @UseGuards(RolesGuard)

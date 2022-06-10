@@ -5,8 +5,8 @@ import { FindOperator, FindConditions, FindOneOptions } from 'typeorm';
 
 import { UUID } from 'types/uuid.type';
 import { Role } from 'models/role.model';
-import { CreateRoleDTO } from 'interfaces/DTOs/role.create.dto';
-import { UpdateRoleDTO } from 'interfaces/DTOs/role.update.dto';
+import { CreateRoleDTO } from 'DTOs/role.create.dto';
+import { UpdateRoleDTO } from 'DTOs/role.update.dto';
 import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 import { User } from 'models/user.model';
 import { AuthErrors } from 'auth/helpers/auth.errors';

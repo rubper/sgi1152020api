@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { Guide } from 'models/guide.model';
-import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
-import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
+import { CreateGuideDTO } from 'DTOs/guide.create.dto';
+import { UpdateGuideDTO } from 'DTOs/guide.update.dto';
 
 @Injectable()
 export class GuideService {

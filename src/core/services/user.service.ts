@@ -5,8 +5,8 @@ import { FindConditions, FindManyOptions, FindOneOptions, FindOperator } from 't
 
 import { UUID } from 'types/uuid.type';
 import { User } from 'models/user.model';
-import { CreateUserDTO } from 'interfaces/DTOs/user.create.dto';
-import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
+import { CreateUserDTO } from 'DTOs/user.create.dto';
+import { UpdateUserDTO } from 'DTOs/user.update.dto';
 import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 import { UserProfile } from 'models/user-profile.model';
 import { Role } from 'models/role.model';

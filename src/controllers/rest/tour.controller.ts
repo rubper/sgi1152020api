@@ -3,8 +3,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 
 import { Guide } from 'models/guide.model';
 import { TourService } from 'core/services/tour.service';
-import { CreateTourDTO } from 'interfaces/DTOs/tour.create.dto';
-import { UpdateTourDTO } from 'interfaces/DTOs/tour.update.dto';
+import { CreateTourDTO } from 'DTOs/tour.create.dto';
+import { UpdateTourDTO } from 'DTOs/tour.update.dto';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { AuthGuard } from 'auth/helpers/auth.guard';
 import { RolesGuard } from 'auth/helpers/roles.guard';

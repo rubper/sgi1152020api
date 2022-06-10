@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserProfile } from 'models/user-profile.model';
-import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
-import { UpdateUserProfileDTO } from 'interfaces/DTOs/user-profile.update.dto';
+import { CreateUserProfileDTO } from 'DTOs/user-profile.create.dto';
+import { UpdateUserProfileDTO } from 'DTOs/user-profile.update.dto';
 
 @Injectable()
 export class UserProfileService {

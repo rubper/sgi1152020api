@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { Tour } from 'models/tour.model';
-import { CreateTourDTO } from 'interfaces/DTOs/tour.create.dto';
-import { UpdateTourDTO } from 'interfaces/DTOs/tour.update.dto';
+import { CreateTourDTO } from 'DTOs/tour.create.dto';
+import { UpdateTourDTO } from 'DTOs/tour.update.dto';
 
 @Injectable()
 export class TourService {

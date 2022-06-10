@@ -9,7 +9,6 @@ import { ITimestampable } from './_timestampable.interface';
 
 export interface ITour extends IResource, ITimestampable {
   date: Moment | string;
-  guide: IGuide | UUID;
   type: TourTypes;
   salesHistory?: (ISale | UUID)[];
 }

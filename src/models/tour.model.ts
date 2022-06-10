@@ -57,14 +57,6 @@ export class Tour extends BuildableEntity<ITour> implements ITour {
   @DeleteDateColumn()
   deleted_at?: string;
 
-  // relationships
-  @ApiProperty({
-    description: 'Guia asignado a la visita.',
-    required: true
-  })
-  @ManyToOne(() => Guide, guide => guide.toursHistory)
-  guide: Guide;
-
   @ApiProperty({
     description: 'Ventas que se han producido para esta visita.',
     required: true

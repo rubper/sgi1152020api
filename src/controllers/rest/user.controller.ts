@@ -7,7 +7,7 @@ import { catchError, map, Observable, of } from 'rxjs';
 import { Guide } from 'models/guide.model';
 import { UserService } from 'core/services/user.service';
 import { SgiResponse } from 'interfaces/_response.interface';
-import { UpdateUserDTO } from 'interfaces/DTOs/user.update.dto';
+import { UpdateUserDTO } from 'DTOs/user.update.dto';
 import { SecurityService } from 'auth/services/security.service';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { User } from 'models/user.model';
@@ -18,8 +18,8 @@ import { AuthGuard } from 'auth/helpers/auth.guard';
 import { RolesGuard } from 'auth/helpers/roles.guard';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { Role } from 'models/role.model';
-import { AllowPermissionDTO } from 'interfaces/DTOs/permission.allow.dto';
-import { RestrictPermissionDTO } from 'interfaces/DTOs/permission.restrict.dto';
+import { AllowPermissionDTO } from 'DTOs/permission.allow.dto';
+import { RestrictPermissionDTO } from 'DTOs/permission.restrict.dto';
 
 
 @Controller('user')

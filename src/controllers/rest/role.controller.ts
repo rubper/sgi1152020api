@@ -3,8 +3,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Ht
 
 import { Role } from 'models/role.model';
 import { RoleService } from 'core/services/role.service';
-import { CreateRoleDTO } from 'interfaces/DTOs/role.create.dto';
-import { UpdateRoleDTO } from 'interfaces/DTOs/role.update.dto';
+import { CreateRoleDTO } from 'DTOs/role.create.dto';
+import { UpdateRoleDTO } from 'DTOs/role.update.dto';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { AuthGuard } from 'auth/helpers/auth.guard';
 import { RolesGuard } from 'auth/helpers/roles.guard';

@@ -3,8 +3,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 
 import { Guide } from 'models/guide.model';
 import { GuideService } from 'core/services/guide.service';
-import { CreateGuideDTO } from 'interfaces/DTOs/guide.create.dto';
-import { UpdateGuideDTO } from 'interfaces/DTOs/guide.update.dto';
+import { CreateGuideDTO } from 'DTOs/guide.create.dto';
+import { UpdateGuideDTO } from 'DTOs/guide.update.dto';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { AuthGuard } from 'auth/helpers/auth.guard';
 import { RolesGuard } from 'auth/helpers/roles.guard';

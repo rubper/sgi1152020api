@@ -23,7 +23,7 @@ import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 import { ActiveSessionResult } from 'auth/interfaces/_active-session-result.interface';
 import { RegisterRequest } from 'auth/interfaces/_register-request.interface';
 import { UserProfileService } from 'core/services/user-profile.service';
-import { CreateUserProfileDTO } from 'interfaces/DTOs/user-profile.create.dto';
+import { CreateUserProfileDTO } from 'DTOs/user-profile.create.dto';
 import { UserProfile } from 'models/user-profile.model';
 import { SgiResponse } from 'interfaces/_response.interface';
 import { AuthErrorFactory, AuthErrors } from 'auth/helpers/auth.errors';
