@@ -1,49 +1,50 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UUID } from 'types/uuid.type';
 
-export class UpdateSaleDTO {  
+export class UpdateSaleDTO {
   @ApiProperty({
     description: 'Monto total por el que se realizo la venta.',
-    required: true
+    required: true,
   })
   total?: number;
-  @ApiProperty({
-    description: 'Cantidad total por la que se realizo la venta.',
-    required: true
-  })
-  cantidadEntradas?: number;
 
   @ApiProperty({
     description: 'Primer nombre del titular de la compra.',
-    required: true
+    required: true,
   })
   nombreComprador?: string;
 
   @ApiProperty({
     description: 'Primer apellido del titular de la compra.',
-    required: true
+    required: true,
   })
   apellidoComprador?: string;
 
   @ApiProperty({
     description: 'El numero de telefono del titular de la compra.',
-    required: true
+    required: true,
   })
   telefono?: string;
-  
+
   @ApiProperty({
     description: 'El correo electronico del titular de la compra.',
-    required: true
+    required: true,
   })
   email?: string;
 
   @ApiProperty({
     description: 'Cantidad de ninos de la compra.',
-    required: false
+    required: false,
   })
   cantidadNinos?: number;
   @ApiProperty({
     description: 'Cantidad de adultos de la compra.',
-    required: false
+    required: false,
   })
   cantidadAdultos?: number;
+  @ApiProperty({
+    description: 'UUID del usuario del vendedor',
+    required: true,
+  })
+  usuarioVendedor: UUID;
 }

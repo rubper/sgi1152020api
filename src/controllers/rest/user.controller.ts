@@ -1,10 +1,20 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
 import { catchError, map, Observable, of } from 'rxjs';
 
-import { Guide } from 'models/guide.model';
+import { Volunteer } from 'models/volunteer.model';
 import { UserService } from 'core/services/user.service';
 import { SgiResponse } from 'interfaces/_response.interface';
 import { UpdateUserDTO } from 'DTOs/user.update.dto';
@@ -21,7 +31,6 @@ import { Role } from 'models/role.model';
 import { AllowPermissionDTO } from 'DTOs/permission.allow.dto';
 import { RestrictPermissionDTO } from 'DTOs/permission.restrict.dto';
 
-
 @Controller('user')
 @SetRoles()
 @UseGuards(RolesGuard)
@@ -32,66 +41,65 @@ export class UserController {
   ) {}
 
   @Post('register')
-  @ApiBody({type: RegisterBody})
-  create(@Body() bodyRequest: RegisterRequest, @Res() res: Response): Observable<Response<SgiResponse>> {
-    return this._securityService.register(bodyRequest)
-      .pipe(
-        catchError(
-          (loginError): Observable<RegisterResult> => {
-            console.log(loginError);
-            
-            const result: LoginResult = {
-              success: false,
-              message: 'error while trying to register',
-              errorDetail: loginError,
-            }
-            return of(result);
-          }
-        ),
-        map(
-          (result: RegisterResult) => {
-            if (result.errorDetail) {
-              const response = this._securityService.createLoginErrorResponseObject(result);
-              return res.status(response.statusCode).send(response);
-            }
-            const response: SgiResponse = {
-              statusCode: 201,
-              message: result.message,
-              data: result
-            }
-            return res.status(201).json(response)
-          }
-        ),
-      );
+  @ApiBody({ type: RegisterBody })
+  create(
+    @Body() bodyRequest: RegisterRequest,
+    @Res() res: Response,
+  ): Observable<Response<SgiResponse>> {
+    return this._securityService.register(bodyRequest).pipe(
+      catchError((loginError): Observable<RegisterResult> => {
+        console.log(loginError);
+
+        const result: LoginResult = {
+          success: false,
+          message: 'error while trying to register',
+          errorDetail: loginError,
+        };
+        return of(result);
+      }),
+      map((result: RegisterResult) => {
+        if (result.errorDetail) {
+          const response =
+            this._securityService.createLoginErrorResponseObject(result);
+          return res.status(response.statusCode).send(response);
+        }
+        const response: SgiResponse = {
+          statusCode: 201,
+          message: result.message,
+          data: result,
+        };
+        return res.status(201).json(response);
+      }),
+    );
   }
 
   @Get()
-  @ApiResponse({type: User, isArray: true})
+  @ApiResponse({ type: User, isArray: true })
   findAll() {
     return this._userService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({type: User})
+  @ApiResponse({ type: User })
   findOne(@Param('id') id: string) {
     return this._userService.findOne(id);
   }
 
   @Get(':id/roles')
-  @ApiResponse({type: Role, isArray: true})
+  @ApiResponse({ type: Role, isArray: true })
   getUserRoles(@Param('id') id: string) {
     return this._userService.getUserRoles(id);
   }
 
   @Patch(':id')
-  @ApiBody({type: UpdateUserDTO})
-  @ApiResponse({type: Guide})
+  @ApiBody({ type: UpdateUserDTO })
+  @ApiResponse({ type: Volunteer })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
     return this._userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @ApiResponse({type: null})
+  @ApiResponse({ type: null })
   remove(@Param('id') id: string) {
     return this._userService.remove(id);
   }
@@ -99,21 +107,34 @@ export class UserController {
   @Post('roles/add')
   @ApiBody({
     type: AllowPermissionDTO,
-    description: 'Requiere el UUID del usuario, y los roles que se le daran en un arreglo de UUIDs de roles.'
+    description:
+      'Requiere el UUID del usuario, y los roles que se le daran en un arreglo de UUIDs de roles.',
   })
-  @ApiResponse({type: User})
-  addUserRole(@Param('id') id: string, @Body() allowPermissionDTO: AllowPermissionDTO) {
-    return this._userService.addUserPermissions(allowPermissionDTO.userId, allowPermissionDTO.roleIds);
+  @ApiResponse({ type: User })
+  addUserRole(
+    @Param('id') id: string,
+    @Body() allowPermissionDTO: AllowPermissionDTO,
+  ) {
+    return this._userService.addUserPermissions(
+      allowPermissionDTO.userId,
+      allowPermissionDTO.roleIds,
+    );
   }
 
   @Post('roles/remove')
   @ApiBody({
     type: RestrictPermissionDTO,
-    description: 'Requiere el UUID del usuario, y los roles que se le quitaran en un arreglo de UUIDs de roles.'
+    description:
+      'Requiere el UUID del usuario, y los roles que se le quitaran en un arreglo de UUIDs de roles.',
   })
-  @ApiResponse({type: User})
-  removeUserRole(@Param('id') id: string, @Body() allowPermissionDTO: RestrictPermissionDTO) {
-    return this._userService.removeUserPermissions(allowPermissionDTO.userId, allowPermissionDTO.roleIds);
+  @ApiResponse({ type: User })
+  removeUserRole(
+    @Param('id') id: string,
+    @Body() allowPermissionDTO: RestrictPermissionDTO,
+  ) {
+    return this._userService.removeUserPermissions(
+      allowPermissionDTO.userId,
+      allowPermissionDTO.roleIds,
+    );
   }
-
 }

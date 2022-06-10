@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { GuideService } from './services/guide.service';
+import { VolunteerService } from './services/volunteer.service';
 import { PermissionService } from './services/permission.service';
 import { ReportService } from './services/report.service';
 import { RoleService } from './services/role.service';
@@ -13,7 +13,7 @@ import { UserService } from './services/user.service';
 @Global()
 @Module({
   exports: [
-    GuideService,
+    VolunteerService,
     PermissionService,
     ReportService,
     RoleService,
@@ -25,7 +25,7 @@ import { UserService } from './services/user.service';
     UserService,
   ],
   providers: [
-    GuideService,
+    VolunteerService,
     PermissionService,
     ReportService,
     RoleService,
@@ -35,6 +35,6 @@ import { UserService } from './services/user.service';
     UserProfileService,
     UserSessionService,
     UserService,
-  ]
+  ],
 })
 export class CoreModule {}

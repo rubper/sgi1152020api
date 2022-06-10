@@ -1,4 +1,4 @@
-export { GuideController } from './guide.controller';
+export { VolunteerController } from './volunteer.controller';
 export { ReportController } from './report.controller';
 export { RoleController } from './role.controller';
 export { SaleController } from './sale.controller';

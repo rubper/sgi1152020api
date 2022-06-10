@@ -3,8 +3,20 @@ import { UUID } from 'types/uuid.type';
 import { UserProfile } from './user-profile.model';
 import { IUser } from 'auth/interfaces/user.interface';
 import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
-import { Guide } from './guide.model';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  Entity,
+  ManyToMany,
+  JoinColumn,
+  JoinTable,
+} from 'typeorm';
+import { Volunteer } from './volunteer.model';
 import { Report } from './report.model';
 import { Sale } from './sale.model';
 import { Session } from './user-session.model';
@@ -14,16 +26,16 @@ import { ApiProperty } from '@nestjs/swagger';
 export class User extends BuildableEntity<IUser> implements IUser {
   @ApiProperty({
     description: 'Identificador unico autogenerado del registro',
-    required: true
+    required: true,
   })
   @PrimaryGeneratedColumn('uuid')
   uuid: UUID;
 
   @ApiProperty({
     description: 'Nombre de usuario unico',
-    required: true
+    required: true,
   })
-  @Column({unique: true})
+  @Column({ unique: true })
   username: string;
 
   @Column()
@@ -32,43 +44,46 @@ export class User extends BuildableEntity<IUser> implements IUser {
   @Column()
   passwordSalt: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   secretHash?: string;
 
   @ApiProperty({
     description: 'Roles del usuario',
-    required: false
+    required: false,
   })
-  @ManyToMany(() => Role, role => role.users)
+  @ManyToMany(() => Role, (role) => role.users)
   @JoinTable()
   roles?: Role[];
 
   @ApiProperty({
-    description: 'Estampa autogenerada de fecha que marca la creacion del registro',
-    required: false
+    description:
+      'Estampa autogenerada de fecha que marca la creacion del registro',
+    required: false,
   })
   @CreateDateColumn()
   created_at: string;
-  
+
   @ApiProperty({
-    description: 'Estampa autogenerada de fecha que marca la edicion del registro',
-    required: false
+    description:
+      'Estampa autogenerada de fecha que marca la edicion del registro',
+    required: false,
   })
   @UpdateDateColumn()
   updated_at: string;
-  
+
   @ApiProperty({
-    description: 'Estampa autogenerada de fecha que marca la eliminacion del registro',
-    required: false
+    description:
+      'Estampa autogenerada de fecha que marca la eliminacion del registro',
+    required: false,
   })
-  @DeleteDateColumn({nullable: true})
+  @DeleteDateColumn({ nullable: true })
   deleted_at?: string;
 
   @ApiProperty({
     description: 'Perfil de usuario',
-    required: false
+    required: false,
   })
-  @OneToOne(() => UserProfile, profile => profile.user, {nullable: true})
+  @OneToOne(() => UserProfile, (profile) => profile.user, { nullable: true })
   @JoinColumn()
   profile?: UserProfile;
 
@@ -76,31 +91,30 @@ export class User extends BuildableEntity<IUser> implements IUser {
   @ApiProperty({
     description: 'Guia asociado si existe',
     required: false,
-    type: () => Guide
+    type: () => Volunteer,
   })
-  @OneToOne(() => Guide, guide => guide.user, {nullable: true})
+  @OneToOne(() => Volunteer, (volunteer) => volunteer.user, { nullable: true })
   @JoinColumn()
-  guide?: Guide;
+  volunteer?: Volunteer;
 
   @ApiProperty({
     description: 'Reporte asociados si existen',
-    required: false
+    required: false,
   })
-  @OneToMany(() => Report, report => report.author)
+  @OneToMany(() => Report, (report) => report.author)
   reports?: Report[];
 
   @ApiProperty({
     description: 'Ventas realizadas por el usuario',
-    required: false
+    required: false,
   })
-  @OneToMany(() => Sale, sale => sale.seller)
+  @OneToMany(() => Sale, (sale) => sale.seller)
   sales?: Sale[];
 
   @ApiProperty({
     description: 'Sesiones del usuario',
-    required: false
+    required: false,
   })
-  @OneToMany(() => Session, session => session.user)
+  @OneToMany(() => Session, (session) => session.user)
   sessions?: Session[];
 }
-

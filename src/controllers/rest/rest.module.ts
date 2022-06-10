@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthServicesModule } from 'auth/services/auth-services.module';
-import { GuideController } from './guide.controller';
+import { VolunteerController } from './volunteer.controller';
 import { PermissionController } from './permission.controller';
 import { ReportController } from './report.controller';
 import { RoleController } from './role.controller';
@@ -14,11 +14,9 @@ import { UserController } from './user.controller';
  * Module containing the rest controllers
  */
 @Module({
-  imports: [
-    AuthServicesModule,
-  ],
+  imports: [AuthServicesModule],
   controllers: [
-    GuideController,
+    VolunteerController,
     PermissionController,
     ReportController,
     RoleController,
@@ -29,7 +27,7 @@ import { UserController } from './user.controller';
     UserController,
   ],
   exports: [
-    GuideController,
+    VolunteerController,
     PermissionController,
     ReportController,
     RoleController,
@@ -40,7 +38,7 @@ import { UserController } from './user.controller';
     UserController,
   ],
   providers: [
-    GuideController,
+    VolunteerController,
     PermissionController,
     ReportController,
     RoleController,
