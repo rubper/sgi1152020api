@@ -20,7 +20,7 @@ import { ISale } from 'interfaces/sale.interface';
 
 @Controller('sale')
 @SetRoles()
-@ApiTags('Ventas')
+@ApiTags('1. Ventas')
 @UseGuards(RolesGuard)
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}

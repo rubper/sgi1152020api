@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Headers, Post, Res } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -14,6 +14,7 @@ import { LoginResult } from 'auth/interfaces/_login-result.interface';
 import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 
 @Controller('auth')
+@ApiTags('Autenticación')
 export class AuthController {
   constructor(
     private readonly _securityService: SecurityService,

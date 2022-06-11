@@ -53,6 +53,7 @@ export class PermissionController {
             "userId": "df0e7fcd-9cfb-4647-83f0-2d4b432e5643",
             "roleIds": [
                 "4a4203bc-78fe-4020-bf1c-50ee789ad167",
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167",
                 "4a4203bc-78fe-4020-bf1c-50ee789ad167"
             ] 
         }

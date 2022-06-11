@@ -43,7 +43,18 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: (firstCompared, secondCompared) => {
+        if(firstCompared.length < secondCompared) {
+          return -1;
+        } else {
+          return 1;
+        }
+      },
+    }
+  });
 
   // set up cors
   const corsConfig: CorsOptions = {

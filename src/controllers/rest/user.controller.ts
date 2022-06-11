@@ -32,7 +32,7 @@ import { RestrictPermissionDTO } from 'DTOs/permission.restrict.dto';
 
 @Controller('user')
 @SetRoles()
-@ApiTags('Usuarios')
+@ApiTags('3. Usuarios')
 @UseGuards(RolesGuard)
 export class UserController {
   constructor(

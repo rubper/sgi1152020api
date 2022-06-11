@@ -21,7 +21,7 @@ import moment from 'moment';
 
 @Controller('volunteer')
 @SetRoles()
-@ApiTags('Voluntarios')
+@ApiTags('2. Voluntarios')
 @UseGuards(RolesGuard)
 export class VolunteerController {
   constructor(private readonly volunteerService: VolunteerService) {}
