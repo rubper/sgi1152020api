@@ -1,22 +1,22 @@
-import { User } from './user.model';
-import { UUID } from 'types/uuid.type';
-
-import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { Moment } from 'moment';
 import {
   Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
-  PrimaryGeneratedColumn,
+  JoinColumn,
+  CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { EnrollmentReason } from 'constants/enrollment-reason.constant';
+
+import { User } from './user.model';
+import { UUID } from 'types/uuid.type';
 import { IVolunteer } from 'interfaces/volunteer.interface';
+import { BuildableEntity } from 'shared/helpers/base/buildable.entity';
+import { EnrollmentReason } from 'constants/enrollment-reason.constant';
 
 @Entity()
 export class Volunteer
@@ -80,6 +80,7 @@ export class Volunteer
   @ApiProperty({
     description: 'El usuario asociado al guía.',
     required: true,
+    type: () => User,
   })
   @OneToOne(() => User, (user) => user.volunteer)
   @JoinColumn()

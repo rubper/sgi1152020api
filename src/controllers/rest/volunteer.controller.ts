@@ -1,4 +1,4 @@
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -19,8 +19,9 @@ import { UpdateVolunteerDTO } from 'DTOs/volunteer.update.dto';
 import { IVolunteer } from 'interfaces/volunteer.interface';
 import moment from 'moment';
 
-@Controller('Volunteer')
+@Controller('volunteer')
 @SetRoles()
+@ApiTags('Voluntarios')
 @UseGuards(RolesGuard)
 export class VolunteerController {
   constructor(private readonly volunteerService: VolunteerService) {}

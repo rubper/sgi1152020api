@@ -90,6 +90,7 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
   @ApiProperty({
     description: 'Usuario del titular si existe.',
     required: false,
+    type: () => User,
   })
   @ManyToOne(() => User, (user) => user.sales, { nullable: true })
   user?: User;
@@ -98,6 +99,7 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
   @ApiProperty({
     description: 'El vendedor asociado a esta compra.',
     required: true,
+    type: () => User,
   })
   @ManyToOne(() => User, (user) => user.sales)
   seller: User;

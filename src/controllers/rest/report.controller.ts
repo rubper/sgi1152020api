@@ -1,4 +1,4 @@
-import { ApiBody, ApiExcludeController, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -19,8 +19,8 @@ import { RolesGuard } from 'auth/helpers/roles.guard';
 import { Volunteer } from 'models/volunteer.model';
 
 @Controller('report')
-@ApiExcludeController()
 @SetRoles()
+@ApiTags('Reportes')
 @UseGuards(RolesGuard)
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}

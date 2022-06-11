@@ -1,4 +1,4 @@
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -20,6 +20,7 @@ import { ISale } from 'interfaces/sale.interface';
 
 @Controller('sale')
 @SetRoles()
+@ApiTags('Ventas')
 @UseGuards(RolesGuard)
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}

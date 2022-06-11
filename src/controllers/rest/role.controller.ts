@@ -1,4 +1,4 @@
-import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpException } from '@nestjs/common';
 
 import { Role } from 'models/role.model';
@@ -13,6 +13,7 @@ import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 
 @Controller('role')
 @SetRoles()
+@ApiTags('Rol de usuario')
 @UseGuards(RolesGuard)
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

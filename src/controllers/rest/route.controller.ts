@@ -1,17 +1,15 @@
 import { Controller, Get, HttpException, Param, UseGuards } from "@nestjs/common";
-import { ApiExcludeController, ApiParam, ApiResponse } from "@nestjs/swagger";
+import { ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SetRoles } from "auth/helpers/auth.decorators";
 import { RolesGuard } from "auth/helpers/roles.guard";
 import { RouteService } from "core/services/route.service";
-import { Role } from "models/role.model";
 import { Route } from "models/route.model";
 import { isUUIDValid } from "shared/helpers/functions/is-uuid-valid.function";
 import { UUID } from "types/uuid.type";
 
-
-@ApiExcludeController()
 @Controller('route')
 @SetRoles()
+@ApiTags('Obtener rutas disponibles')
 @UseGuards(RolesGuard)
 export class RouteController {
   constructor(private readonly _routeService: RouteService) {}

@@ -1,4 +1,4 @@
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiExcludeController, ApiResponse } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 
 import { UserProfile } from 'models/user-profile.model';
@@ -11,6 +11,7 @@ import { RolesGuard } from 'auth/helpers/roles.guard';
 
 @Controller('user-profile')
 @SetRoles()
+@ApiExcludeController()
 @UseGuards(RolesGuard)
 export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}

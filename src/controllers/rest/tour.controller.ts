@@ -1,4 +1,4 @@
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiExcludeController, ApiResponse } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -18,6 +18,7 @@ import { SetRoles } from 'auth/helpers/auth.decorators';
 import { RolesGuard } from 'auth/helpers/roles.guard';
 
 @Controller('tour')
+@ApiExcludeController()
 @SetRoles()
 @UseGuards(RolesGuard)
 export class TourController {

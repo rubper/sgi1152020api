@@ -18,6 +18,12 @@ export class CreateUserProfileDTO implements Partial<IUserProfile> {
   lastName: string;
 
   @ApiProperty({
+    description: 'Numero unico de identidad DUI del titular. Largo de cadena maximo: 10 caracteres.',
+    required: true
+  })
+  identityDocument: string;
+
+  @ApiProperty({
     description: 'Numero de telefono del usuario opcional',
     required: false
   })
@@ -28,12 +34,6 @@ export class CreateUserProfileDTO implements Partial<IUserProfile> {
     required: false
   })
   email?: string;
-
-  @ApiProperty({
-    description: 'Numero unico de identidad DUI del titular. Largo de cadena maximo: 10 caracteres.',
-    required: true
-  })
-  identityDocument: string;
 
   @ApiProperty({
     description: 'Numeros telefonicos extra',
