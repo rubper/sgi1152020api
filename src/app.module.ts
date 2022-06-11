@@ -20,6 +20,7 @@ import { SyncResult } from 'auth/interfaces/sync-result.interface';
 import { Subscription } from 'rxjs';
 import { RoleService } from 'core/services/role.service';
 import { PermissionService } from 'core/services/permission.service';
+import { SaleService } from 'core/services/sale.service';
 
 export const graphQlModuleOptions: GqlModuleOptions = {
   driver: ApolloDriver,
@@ -50,6 +51,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
   private _permissionSyncSubscription: Subscription;
   constructor(
     private _roleService: RoleService,
+    private _saleService: SaleService,
     private _routeService: RouteService,
     private _permissionService: PermissionService,
   ) { }
@@ -59,6 +61,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     this._roleService.triggerRoleSync();
     this._routeService.triggerRouteSync();
     this._permissionService.triggerPermissionSync();
+    this._saleService.generateFakeSales(20)
+      .subscribe((result) => console.log(result));
     this._routeSyncSubscription = this._routeService
       .onSyncRouteTriggered$
       .subscribe({

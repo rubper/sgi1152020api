@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 
 import { Sale } from 'models/sale.model';
@@ -17,6 +18,7 @@ import { UpdateSaleDTO } from 'DTOs/sale.update.dto';
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { RolesGuard } from 'auth/helpers/roles.guard';
 import { ISale } from 'interfaces/sale.interface';
+import { from, map } from 'rxjs';
 
 @Controller('sale')
 @SetRoles()
@@ -49,8 +51,16 @@ export class SaleController {
 
   @Get(':id')
   @ApiResponse({ type: Sale })
-  findOne(@Param('id') id: string) {
-    return this.saleService.findOne(id);
+  findOne(@Param('id') id: string, @Res() res) {
+    return from(this.saleService.findOne(id))
+      .pipe(
+        map((response) => {
+          if (!response) {
+            return res.statusCode(404).json({statusCode: 404, message: 'not found'})
+          }
+          return response;
+        })
+      );
   }
 
   @Patch(':id')

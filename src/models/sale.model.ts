@@ -15,6 +15,8 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { first, from } from 'rxjs';
+import { faker } from '@faker-js/faker';
 
 @Entity()
 export class Sale extends BuildableEntity<ISale> implements ISale {
@@ -126,5 +128,33 @@ export class Sale extends BuildableEntity<ISale> implements ISale {
   @BeforeUpdate()
   private _calculateTickets() {
     this.amount = this.adultsQuantity + this.kidsQuantity;
+  }
+  
+  public generateFakeSales(salesQuantity: number) {
+    from(User.find())
+      .pipe(first())
+      .subscribe(
+        (user: User[]) => {
+          const fakeSeller = user[0];
+          const fakeSales: Partial<ISale>[] = [];
+          for (let index = 1; index <= salesQuantity; index++) {
+            const fakeFirstName = faker.name.firstName();
+            const fakeLastName = faker.name.lastName();
+            const sale: Partial<ISale> = {
+              amount: Number(faker.random.numeric(1, {allowLeadingZeros: false})),
+              ownerEmail: faker.internet.email(fakeFirstName, fakeLastName),
+              ownerPhone: faker.phone.phoneNumber(),
+              ownerFirstName: fakeFirstName,
+              ownerLastName: fakeLastName,
+              seller: fakeSeller.uuid,
+              kidsQuantity: Number(faker.random.numeric(1, {allowLeadingZeros: false})),
+              adultsQuantity: Number(faker.random.numeric(1, {allowLeadingZeros: false})),
+            }
+            fakeSales.push(sale)
+          }
+          console.log(fakeSales);
+
+        }
+      )
   }
 }
