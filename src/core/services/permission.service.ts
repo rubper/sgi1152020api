@@ -60,10 +60,7 @@ export class PermissionService {
       }),
       switchMap(
         ([roles, routes]: [Role[], [Route[], Route[]]]) => {
-          const [adminRoutes, staffRoutes]: [Route[], Route[]] = routes;
-          console.log(routes);
-          console.log(roles);
-          
+          const [adminRoutes, staffRoutes]: [Route[], Route[]] = routes;          
           const success$: Observable<boolean>[] = [];
           roles.forEach(
             (role: Role) => {

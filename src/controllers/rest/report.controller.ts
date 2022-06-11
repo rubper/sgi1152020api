@@ -20,7 +20,7 @@ import { Volunteer } from 'models/volunteer.model';
 
 @Controller('report')
 @SetRoles()
-@ApiTags('Reportes')
+@ApiTags('Almacenamiento de Reportes')
 @UseGuards(RolesGuard)
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}

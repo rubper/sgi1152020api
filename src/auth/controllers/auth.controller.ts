@@ -14,7 +14,7 @@ import { LoginResult } from 'auth/interfaces/_login-result.interface';
 import { RegisterResult } from 'auth/interfaces/_register-result.interface';
 
 @Controller('auth')
-@ApiTags('Autenticación')
+@ApiTags('4. Autenticación')
 export class AuthController {
   constructor(
     private readonly _securityService: SecurityService,

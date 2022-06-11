@@ -121,7 +121,6 @@ export class RouteService {
         map(
           // get sync result object
           (checks: boolean[]) => {
-            console.log(checks);
             const success = checks.every((check: boolean) => check === true);
             const itemsIndex = [];
             checks.forEach(

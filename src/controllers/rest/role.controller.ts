@@ -13,7 +13,7 @@ import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 
 @Controller('role')
 @SetRoles()
-@ApiTags('Rol de usuario')
+@ApiTags('5. Roles de usuario')
 @UseGuards(RolesGuard)
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

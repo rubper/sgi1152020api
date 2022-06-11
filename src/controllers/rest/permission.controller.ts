@@ -12,7 +12,7 @@ import { RestrictPermissionDTO } from 'DTOs/permission.restrict.dto';
 
 @Controller('permission')
 @SetRoles()
-@ApiTags('Permisos de ruta')
+@ApiTags('Operaciones de permisos de ruta')
 @UseGuards(RolesGuard)
 export class PermissionController {
   constructor(
@@ -21,11 +21,10 @@ export class PermissionController {
     ) {}
 
   @Post('grant-role')
-  @ApiOperation({description: 'Este endpoint le otorga un rol a un usuario'})
   @ApiBody({type: AllowPermissionDTO})
-  @ApiParam({
-    name: 'Body',
-    description: 'debe proveerse un DTO de permiso de rol, ' + 
+  @ApiOperation({ 
+    description: 'Este endpoint le otorga un rol a un usuario, ' +
+    'debe proveerse un DTO de permiso de rol: ' + 
     'un objecto que contiene el ID de usuario en su propiedad userId ' +
     'y un arreglo de IDs de roles en su propiedad roleIds. Por ejemplo: \n' +
     `
@@ -42,12 +41,11 @@ export class PermissionController {
     return this._roleService.addRolesToUser(allowPermissionDTO.userId, allowPermissionDTO.roleIds);
   }
   @Post('remove-role')
-  @ApiOperation({description: 'Este endpoint le quita un rol a un usuario'})
-  @ApiParam({
-    name: 'Body',
-    description: 'debe proveerse un DTO de restriccion, ' + 
+  @ApiOperation({
+    description: 'Este endpoint le quita un rol a un usuario, ' + 
+    'debe proveerse un DTO de restriccion: ' + 
     'un objecto que contiene el ID de usuario en su propiedad userId ' +
-    'y un arreglo de IDs de roles en su propiedad roleIds. Por ejemplo: ' +
+    'y un arreglo de IDs de roles en su propiedad roleIds. Por ejemplo: \n' +
     `
         {
             "userId": "df0e7fcd-9cfb-4647-83f0-2d4b432e5643",
@@ -65,12 +63,46 @@ export class PermissionController {
   }
 
   @Post('create-permission')
+  @ApiOperation({
+    description: 'Este endpoint permite a un rol acceder a una, ' + 
+    'debe proveerse un DTO de permiso: ' + 
+    'un objecto que contiene el ID de la ruta a permitir en su propiedad userId ' +
+    'y un arreglo de IDs de roles en su propiedad roleIds, los cuales tendran acceso ' +
+    'a la ruta especificada. Por ejemplo: \n' +
+    `
+        {
+            "routeId": "df0e7fcd-9cfb-4647-83f0-2d4b432e5643",
+            "roleIds": [
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167",
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167",
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167"
+            ] 
+        }
+    `
+  })
   @ApiBody({type: CreatePermissionDTO})
   allowRoleToRoute(@Body() createPermissionDTO: CreatePermissionDTO) {
     return this._permissionService.allowRoleToRoute(createPermissionDTO.routeId, createPermissionDTO.roleIds);
   }
   
   @Post('delete-permission')
+  @ApiOperation({
+    description: 'Este endpoint retira el permiso a un rol, de acceder a una ruta, ' + 
+    'debe proveerse un DTO de permiso: ' + 
+    'un objecto que contiene el ID de la ruta a permitir en su propiedad userId ' +
+    'y un arreglo de IDs de roles en su propiedad roleIds, los cuales tendran acceso ' +
+    'a la ruta especificada. Por ejemplo: \n' +
+    `
+        {
+            "routeId": "df0e7fcd-9cfb-4647-83f0-2d4b432e5643",
+            "roleIds": [
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167",
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167",
+                "4a4203bc-78fe-4020-bf1c-50ee789ad167"
+            ] 
+        }
+    `
+  })
   @ApiBody({type: RemovePermissionDTO})
   removeRolePermissionToRoute(@Body() createPermissionDTO: RemovePermissionDTO) {
     return this._permissionService.removeRolePermissionToRoute(createPermissionDTO.routeId, createPermissionDTO.roleIds);
