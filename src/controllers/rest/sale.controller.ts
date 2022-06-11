@@ -31,6 +31,8 @@ export class SaleController {
     const newSale: Partial<ISale> = {
       ownerFirstName: createSaleDto.nombreComprador,
       ownerLastName: createSaleDto.apellidoComprador,
+      ownerEmail: createSaleDto.email,
+      ownerPhone: createSaleDto.telefono,
       seller: createSaleDto.usuarioVendedor,
       kidsQuantity: createSaleDto.cantidadNinos,
       adultsQuantity: createSaleDto.cantidadAdultos,
