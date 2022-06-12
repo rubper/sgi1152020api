@@ -63,9 +63,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     this._roleService.triggerRoleSync();
     this._routeService.triggerRouteSync();
     this._permissionService.triggerPermissionSync();
-    this._saleService.generateFakeSales(20)
-      .subscribe((result) => console.log(result));
     this._userService.generateFakeUsers(5)
+      .subscribe((result) => console.log(result));
+    this._saleService.generateFakeSales(20)
       .subscribe((result) => console.log(result));
     this._routeSyncSubscription = this._routeService
       .onSyncRouteTriggered$
