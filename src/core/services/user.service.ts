@@ -133,31 +133,46 @@ export class UserService {
     }
 
   generateFakeUsers(usersQuantity: number) {
-    return from(User.find())
-      .pipe(
-        first(),
-        filter(
-          (users: User[]) => users.length < usersQuantity
-        ),
-        switchMap(
-          async (users: User[]) => {
-            const usersResult: Observable<User>[] = [];
-            for (let index = 1; index <= usersQuantity; index++) {
-              const fakeSalt = await genSalt();
-              const fakePass = `fakepass${index}`;
-              const fakeHash = hash(fakePass, fakeSalt)
+    const userResults$: Observable<IUser>[] = [];
+    for (let index = 1; index <= usersQuantity; index++) {
+      const fakePass = `fakepass${index}`;
+      
+      const userResult$ = from(User.find())
+        .pipe(
+          // just one subscription
+          first(),
+          // only emit if users quantity is less than expected
+          filter(
+            (users: User[]) => users.length < usersQuantity
+          ),
+          switchMap(
+            // switch to generate salt
+            () => from(genSalt())
+          ),
+          switchMap(
+            // also get hash from salt
+            (fakeSalt: string) => combineLatest([
+              of(fakeSalt),
+              from(hash(fakePass, fakeSalt))
+            ])
+          ),
+          switchMap(
+            // do user creation
+            ([salt, hash]: [string, string]) => {
               const user: Partial<IUser> = {
                 username: `fakeUser${index}`,
-                passwordHash: await fakeHash,
-                passwordSalt: fakeSalt,
+                passwordHash:  hash,
+                passwordSalt: salt,
               };
               const newUser = new User(user);
-              const userResult = from(newUser.save());
-              usersResult.push(userResult);
+              return from(newUser.save());
             }
-            return combineLatest(usersResult);
-          }
-        )
-      )
+          )
+        );
+      // save observable result to array
+      userResults$.push(userResult$);
+    }
+    // emit when all have emitted
+    return combineLatest(userResults$);
   }
 }

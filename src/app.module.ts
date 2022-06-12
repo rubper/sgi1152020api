@@ -17,11 +17,12 @@ import { ControllersModule } from 'controllers/controllers.module';
 import { AuthControllersModule } from 'auth/controllers/auth-controllers.module';
 import { RouteService } from 'core/services/route.service';
 import { SyncResult } from 'auth/interfaces/sync-result.interface';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { RoleService } from 'core/services/role.service';
 import { PermissionService } from 'core/services/permission.service';
 import { SaleService } from 'core/services/sale.service';
 import { UserService } from 'core/services/user.service';
+import { User } from 'models/user.model';
 
 export const graphQlModuleOptions: GqlModuleOptions = {
   driver: ApolloDriver,
@@ -63,10 +64,17 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     this._roleService.triggerRoleSync();
     this._routeService.triggerRouteSync();
     this._permissionService.triggerPermissionSync();
-    this._userService.generateFakeUsers(5)
-      .subscribe((result) => console.log(result));
-    this._saleService.generateFakeSales(20)
-      .subscribe((result) => console.log(result));
+    this._userService
+    .generateFakeUsers(5)
+    .pipe(
+      switchMap(
+        (userresult) => {
+          console.log(userresult);
+          return this._saleService.generateFakeSales(20);
+        }
+      )
+    )
+    .subscribe((saleresult) => console.log(saleresult));
     this._routeSyncSubscription = this._routeService
       .onSyncRouteTriggered$
       .subscribe({

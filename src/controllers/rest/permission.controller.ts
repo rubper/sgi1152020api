@@ -1,5 +1,5 @@
 import { ApiBody, ApiOperation, ApiParam, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 
 import { SetRoles } from 'auth/helpers/auth.decorators';
 import { RolesGuard } from 'auth/helpers/roles.guard';
@@ -9,6 +9,8 @@ import { RemovePermissionDTO } from 'DTOs/permission.remove.dto';
 import { RoleService } from 'core/services/role.service';
 import { AllowPermissionDTO } from 'DTOs/permission.allow.dto';
 import { RestrictPermissionDTO } from 'DTOs/permission.restrict.dto';
+import { UUID } from 'types/uuid.type';
+import { Route } from 'models/route.model';
 
 @Controller('permission')
 @SetRoles()
@@ -106,5 +108,16 @@ export class PermissionController {
   @ApiBody({type: RemovePermissionDTO})
   removeRolePermissionToRoute(@Body() createPermissionDTO: RemovePermissionDTO) {
     return this._permissionService.removeRolePermissionToRoute(createPermissionDTO.routeId, createPermissionDTO.roleIds);
+  }
+
+  @Get('route/:id')
+  async getRoutePermissions(@Param('id') routeId: UUID) {
+    const route: Route | undefined = await Route.findOne({
+      relations: ['roles'],
+      where: {
+        'uuid': routeId
+      }
+    });
+    return route.roles;
   }
 }

@@ -30,7 +30,7 @@ export class ReportController {
   create(@Body() createReportDto: CreateReportDTO) {
     return this.reportService.create(createReportDto);
   }
-  c;
+  
   @Get()
   @ApiResponse({ type: Volunteer, isArray: true })
   findAll() {
