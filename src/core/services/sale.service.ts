@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Sale } from 'models/sale.model';
 import { ISale } from 'interfaces/sale.interface';
 import { faker } from '@faker-js/faker';
-import { filter, first, from, Observable, switchMap, combineLatest } from 'rxjs';
+import { filter, first, from, Observable, switchMap, combineLatest, of } from 'rxjs';
 import { User } from 'models/user.model';
 
 const TICKET_VALUE = 1.25;
@@ -49,7 +49,7 @@ export class SaleService {
           (users: User[]) => {
             const fakeSeller = users[0];
             if (!fakeSeller) {
-              return;
+              return of();
             }
             const salesResults: Observable<Sale>[] = [];
             for (let index = 1; index <= salesQuantity; index++) {
