@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 
-import { Observable, of, from, map } from 'rxjs';
+import { faker } from '@faker-js/faker';
+import { Observable, of, from, map, first, filter, switchMap, combineLatest } from 'rxjs';
 import { FindConditions, FindManyOptions, FindOneOptions, FindOperator } from 'typeorm';
 
 import { UUID } from 'types/uuid.type';
@@ -11,6 +12,9 @@ import { isUUIDValid } from 'shared/helpers/functions/is-uuid-valid.function';
 import { UserProfile } from 'models/user-profile.model';
 import { Role } from 'models/role.model';
 import { AuthErrors } from 'auth/helpers/auth.errors';
+import { IUser } from 'auth/interfaces/user.interface';
+import { genSalt, hash } from 'bcrypt';
+import { DevEnvironment } from 'constants/dev-environment.constant';
 
 @Injectable()
 export class UserService {
@@ -127,4 +131,33 @@ export class UserService {
         map((user: User) => user.roles)
       )
     }
+
+  generateFakeUsers(usersQuantity: number) {
+    return from(User.find())
+      .pipe(
+        first(),
+        filter(
+          (users: User[]) => users.length < usersQuantity
+        ),
+        switchMap(
+          async (users: User[]) => {
+            const usersResult: Observable<User>[] = [];
+            for (let index = 1; index <= usersQuantity; index++) {
+              const fakeSalt = await genSalt();
+              const fakePass = `fakepass${index}`;
+              const fakeHash = hash(fakePass, fakeSalt)
+              const user: Partial<IUser> = {
+                username: `fakeUser${index}`,
+                passwordHash: await fakeHash,
+                passwordSalt: fakeSalt,
+              };
+              const newUser = new User(user);
+              const userResult = from(newUser.save());
+              usersResult.push(userResult);
+            }
+            return combineLatest(usersResult);
+          }
+        )
+      )
+  }
 }
