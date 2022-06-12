@@ -48,6 +48,9 @@ export class SaleService {
         switchMap(
           (users: User[]) => {
             const fakeSeller = users[0];
+            if (!fakeSeller) {
+              return;
+            }
             const salesResults: Observable<Sale>[] = [];
             for (let index = 1; index <= salesQuantity; index++) {
               const lastName = faker.name.lastName();
